@@ -95,6 +95,12 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --gain: oklch(0.55 0.15 155);
+  --gain-foreground: oklch(0.99 0.01 155);
+  --shopee: oklch(0.66 0.21 38);
+  --shopee-foreground: oklch(0.99 0 0);
+  --enjoei: oklch(0.38 0.16 320);
+  --enjoei-foreground: oklch(0.99 0 0);
 }
 
 .dark {
