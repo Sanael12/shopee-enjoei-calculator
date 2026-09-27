@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EnjoeiRouteImport } from './routes/enjoei'
+import { Route as ShopeeRouteImport } from './routes/shopee'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnjoeiRoute = EnjoeiRouteImport.update({
+  id: '/enjoei',
+  path: '/enjoei',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopeeRoute = ShopeeRouteImport.update({
+  id: '/shopee',
+  path: '/shopee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/enjoei': typeof EnjoeiRoute
+  '/shopee': typeof ShopeeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/enjoei': typeof EnjoeiRoute
+  '/shopee': typeof ShopeeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/enjoei': typeof EnjoeiRoute
+  '/shopee': typeof ShopeeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/enjoei' | '/shopee'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/enjoei' | '/shopee'
+  id: '__root__' | '/' | '/enjoei' | '/shopee'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EnjoeiRoute: typeof EnjoeiRoute
+  ShopeeRoute: typeof ShopeeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/enjoei': {
+      id: '/enjoei'
+      path: '/enjoei'
+      fullPath: '/enjoei'
+      preLoaderRoute: typeof EnjoeiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopee': {
+      id: '/shopee'
+      path: '/shopee'
+      fullPath: '/shopee'
+      preLoaderRoute: typeof ShopeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EnjoeiRoute: EnjoeiRoute,
+  ShopeeRoute: ShopeeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
