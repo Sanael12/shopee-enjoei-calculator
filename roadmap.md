@@ -6,6 +6,6 @@
 - [x] Confirmar que vendas persistem ao reabrir no mesmo navegador
 - [x] Agrupar vendas por plataforma e mostrar top 5 de produtos com lucro total
 - [x] Animar entrada e saída das opções respeitando movimento reduzido
-- [ ] Trocar troféu enviado e mostrar top 3 com logo da plataforma
-- [ ] Mostrar investimento e lucro total em cada plataforma
-- [ ] Reforçar transições entre páginas e verificar no navegador
+- [x] Trocar troféu enviado e mostrar top 3 com logo da plataforma
+- [x] Mostrar investimento e lucro total em cada plataforma
+- [x] Reforçar transições entre páginas e verificar no navegador
