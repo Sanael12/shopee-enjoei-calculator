@@ -52,7 +52,7 @@ function ShopeePage() {
           <div className="animate-fade-in rounded-xl bg-muted px-4 py-3 text-xs text-muted-foreground">
             Faixa: <strong className="text-foreground">{tier.label}</strong> —{" "}
             {(tier.rate * 100).toFixed(0)}% + R$ {tier.fixed.toFixed(2).replace(".", ",")} + R${" "}
-            {SELLER_FEE.toFixed(2).replace(".", ",")} · subsídio Pix {tier.pixLabel} · embalagem R$ 1,00
+            {SELLER_FEE.toFixed(2).replace(".", ",")} · Subsídio Pix {tier.pixLabel} · Embalagem R$ 1,00
           </div>
           <ResultCard
             result={result}

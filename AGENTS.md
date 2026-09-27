@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep sales in browser storage for this single-device calculator; no connected backend is available, so saved sales remain local to that browser.
+- Use one shared calculator result/save form across Shopee, Enjoei, and Doces so quantity multiplies each per-item total consistently.

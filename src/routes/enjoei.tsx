@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { CalcShell, MoneyField, ResultCard } from "@/components/CalcShell";
 import { calcEnjoei, ENJOEI_MODES, parseMoney, type EnjoeiMode } from "@/lib/calc";
 import { addSale } from "@/lib/sales";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/enjoei")({
   head: () => ({
@@ -42,7 +43,7 @@ function EnjoeiPage() {
         {MODES.map((m) => {
           const active = m === mode;
           return (
-            <button
+            <Button
               key={m}
               onClick={() => setMode(m)}
               className={`rounded-xl border px-2 py-3 text-sm font-medium transition-all duration-200 active:scale-95 ${
@@ -51,8 +52,8 @@ function EnjoeiPage() {
                   : "border-border bg-card text-foreground hover:bg-accent"
               }`}
             >
-              {ENJOEI_MODES[m].name.replace("Modo ", "")}
-            </button>
+              {ENJOEI_MODES[m].name.replace("Modo ", "").replace(/^./, (c) => c.toUpperCase())}
+            </Button>
           );
         })}
       </div>
@@ -71,11 +72,11 @@ function EnjoeiPage() {
               platform: "enjoei",
               detail: ENJOEI_MODES[mode].name,
               name: i.name,
-                qty: i.qty,
-                date: i.date,
-                price: p * i.qty,
-                cost: c * i.qty,
-                profit: result.profit * i.qty,
+              qty: i.qty,
+              date: i.date,
+              price: p * i.qty,
+              cost: c * i.qty,
+              profit: result.profit * i.qty,
               margin: result.margin,
             })
           }

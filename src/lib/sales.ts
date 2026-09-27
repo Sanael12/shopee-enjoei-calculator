@@ -17,7 +17,10 @@ export type Sale = {
 
 const KEY = "calc-vendas";
 
-export const today = () => new Date().toISOString().slice(0, 10);
+export const today = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+};
 
 export function loadSales(): Sale[] {
   try {
