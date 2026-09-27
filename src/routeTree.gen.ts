@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocesRouteImport } from './routes/doces'
 import { Route as EnjoeiRouteImport } from './routes/enjoei'
 import { Route as ShopeeRouteImport } from './routes/shopee'
 import { Route as VendasRouteImport } from './routes/vendas'
@@ -17,6 +18,11 @@ import { Route as VendasRouteImport } from './routes/vendas'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocesRoute = DocesRouteImport.update({
+  id: '/doces',
+  path: '/doces',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EnjoeiRoute = EnjoeiRouteImport.update({
@@ -37,12 +43,14 @@ const VendasRoute = VendasRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/enjoei' | '/shopee' | '/vendas'
+  fullPaths: '/' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/enjoei' | '/shopee' | '/vendas'
-  id: '__root__' | '/' | '/enjoei' | '/shopee' | '/vendas'
+  to: '/' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
+  id: '__root__' | '/' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DocesRoute: typeof DocesRoute
   EnjoeiRoute: typeof EnjoeiRoute
   ShopeeRoute: typeof ShopeeRoute
   VendasRoute: typeof VendasRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doces': {
+      id: '/doces'
+      path: '/doces'
+      fullPath: '/doces'
+      preLoaderRoute: typeof DocesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/enjoei': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DocesRoute: DocesRoute,
   EnjoeiRoute: EnjoeiRoute,
   ShopeeRoute: ShopeeRoute,
   VendasRoute: VendasRoute,

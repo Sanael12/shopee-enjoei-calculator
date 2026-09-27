@@ -56,13 +56,16 @@ function ShopeePage() {
           </div>
           <ResultCard
             result={result}
-            onSave={() =>
+            onSave={(i) =>
               addSale({
                 platform: "shopee",
                 detail: tier.label,
-                price: p,
-                cost: c,
-                profit: result.profit,
+                name: i.name,
+                qty: i.qty,
+                date: i.date,
+                price: p * i.qty,
+                cost: c * i.qty,
+                profit: result.profit * i.qty,
                 margin: result.margin,
               })
             }

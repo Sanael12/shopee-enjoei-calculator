@@ -66,13 +66,16 @@ function EnjoeiPage() {
       {p > 0 ? (
         <ResultCard
           result={result}
-          onSave={() =>
+          onSave={(i) =>
             addSale({
               platform: "enjoei",
               detail: ENJOEI_MODES[mode].name,
-              price: p,
-              cost: c,
-              profit: result.profit,
+              name: i.name,
+                qty: i.qty,
+                date: i.date,
+                price: p * i.qty,
+                cost: c * i.qty,
+                profit: result.profit * i.qty,
               margin: result.margin,
             })
           }
