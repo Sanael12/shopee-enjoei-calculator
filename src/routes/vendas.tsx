@@ -181,7 +181,7 @@ function VendasPage() {
           </Button>
         ) : null}
           </div>
-          <aside className="overflow-hidden rounded-2xl bg-card shadow-xl" aria-label="Top 5 produtos por lucro">
+          <aside className="order-first overflow-hidden rounded-2xl bg-card shadow-xl lg:order-last" aria-label="Top 5 produtos por lucro">
             <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
               <img src={trophy} alt="Troféu" width={768} height={768} loading="lazy" className="size-14 object-contain" />
               <div>

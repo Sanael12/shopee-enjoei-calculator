@@ -11,3 +11,4 @@
 
 - Keep sales in browser storage for this single-device calculator; no connected backend is available, so saved sales remain local to that browser.
 - Use one shared calculator result/save form across Shopee, Enjoei, and Doces so quantity multiplies each per-item total consistently.
+- Use TanStack Router view transitions for option navigation and CSS reduced-motion overrides, so navigation animates without replacing the router or blocking accessible motion settings.
