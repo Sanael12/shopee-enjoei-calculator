@@ -4,6 +4,8 @@ import { useState } from "react";
 import { BRAND_BG, Logo, ProfitBadge } from "@/components/CalcShell";
 import { brl, LEVEL_STYLE, profitLevel } from "@/lib/calc";
 import { formatDate, useSales, type Sale } from "@/lib/sales";
+import trophy from "@/assets/trofeu-ranking.png";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/vendas")({
   head: () => ({
@@ -54,15 +56,15 @@ function SaleRow({ s, i, update, remove }: { s: Sale; i: number; update: (id: st
       </div>
 
       <div className="mt-2 flex gap-2 border-t border-border pt-2">
-        <button onClick={() => setEditName((v) => !v)} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground">
+        <Button variant="ghost" size="sm" onClick={() => setEditName((v) => !v)} className="h-7 gap-1 px-2 text-xs text-muted-foreground">
           <Pencil className="size-3.5" /> Nome
-        </button>
-        <button onClick={() => setEditDate((v) => !v)} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground">
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => setEditDate((v) => !v)} className="h-7 gap-1 px-2 text-xs text-muted-foreground">
           <Calendar className="size-3.5" /> Data
-        </button>
-        <button onClick={() => remove(s.id)} className="ml-auto flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-destructive">
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => remove(s.id)} className="ml-auto h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-destructive">
           <Trash2 className="size-3.5" /> Apagar
-        </button>
+        </Button>
       </div>
 
       {editName ? (
@@ -75,7 +77,7 @@ function SaleRow({ s, i, update, remove }: { s: Sale; i: number; update: (id: st
           }}
         >
           <input autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="Qual foi a venda?" className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring" />
-          <button className="rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground">Salvar</button>
+          <Button type="submit" className="rounded-lg px-3 text-sm font-semibold">Salvar</Button>
         </form>
       ) : null}
       {editDate ? (
@@ -97,10 +99,29 @@ function VendasPage() {
   const profit = sales.reduce((a, s) => a + s.profit, 0);
   const margin = sold > 0 ? (profit / sold) * 100 : 0;
   const lvl = profitLevel(profit, margin);
+  const groups = (["shopee", "enjoei", "doces"] as const).map((platform) => ({
+    platform,
+    items: sales.filter((sale) => sale.platform === platform),
+  })).filter((group) => group.items.length > 0);
+  const products = new Map<string, { name: string; profit: number; count: number }>();
+  for (const sale of sales) {
+    const name = sale.name?.trim();
+    if (!name) continue;
+    const key = name.toLocaleLowerCase("pt-BR");
+    const current = products.get(key);
+    if (current) {
+      current.profit += sale.profit;
+      current.count += sale.qty || 1;
+    } else {
+      products.set(key, { name, profit: sale.profit, count: sale.qty || 1 });
+    }
+  }
+  const top = [...products.values()].sort((a, b) => b.profit - a.profit).slice(0, 5);
+  const topProfit = top.reduce((total, product) => total + product.profit, 0);
 
   return (
     <div className={`min-h-screen px-4 py-8 ${BRAND_BG.vendas}`}>
-      <div className="mx-auto w-full max-w-lg">
+      <div className="mx-auto w-full max-w-5xl">
         <Link to="/" className="mb-6 inline-flex items-center gap-2 text-sm text-[var(--shopee-foreground)] opacity-80 hover:opacity-100">
           <ArrowLeft className="size-4" /> Voltar
         </Link>
@@ -112,16 +133,27 @@ function VendasPage() {
           </div>
         </div>
 
-        <div className="mt-6 space-y-3">
-          {sales.length === 0 ? (
-            <p className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground">
-              Nenhuma venda ainda — calcule e toque em “Salvar venda”
-            </p>
-          ) : null}
-          {sales.map((s, i) => (
-            <SaleRow key={s.id} s={s} i={i} update={update} remove={remove} />
-          ))}
-        </div>
+        <div className="mt-6 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0">
+            <div className="space-y-6">
+              {sales.length === 0 ? (
+                <p className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground">
+                  Nenhuma venda ainda — calcule e toque em “Salvar venda”
+                </p>
+              ) : null}
+              {groups.map(({ platform, items }) => (
+                <section key={platform} aria-label={`Vendas ${PLATFORM_NAME[platform]}`}>
+                  <div className="mb-3 flex items-center gap-3 text-[var(--shopee-foreground)]">
+                    <Logo brand={platform} className="size-9" />
+                    <h2 className="text-lg font-bold">{PLATFORM_NAME[platform]}</h2>
+                    <span className="text-xs opacity-80">{items.length} venda(s)</span>
+                  </div>
+                  <div className="space-y-3">
+                    {items.map((sale, i) => <SaleRow key={sale.id} s={sale} i={i} update={update} remove={remove} />)}
+                  </div>
+                </section>
+              ))}
+            </div>
 
         {sales.length > 0 ? (
           <div className="mt-6 animate-scale-in overflow-hidden rounded-2xl bg-card shadow-2xl">
@@ -141,13 +173,39 @@ function VendasPage() {
         ) : null}
 
         {sales.length > 0 ? (
-          <button
+          <Button variant="ghost"
             onClick={() => confirm("Apagar todas as vendas?") && clear()}
             className="mt-4 w-full text-center text-xs text-[var(--shopee-foreground)] opacity-70 hover:opacity-100"
           >
             Apagar todas
-          </button>
+          </Button>
         ) : null}
+          </div>
+          <aside className="overflow-hidden rounded-2xl bg-card shadow-xl" aria-label="Top 5 produtos por lucro">
+            <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
+              <img src={trophy} alt="Troféu" width={768} height={768} loading="lazy" className="size-14 object-contain" />
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Top 5 produtos</h2>
+                <p className="text-xs text-muted-foreground">Maiores lucros acumulados</p>
+              </div>
+            </div>
+            {top.length > 0 ? (
+              <ol className="divide-y divide-border">
+                {top.map((item, i) => (
+                  <li key={item.name.toLocaleLowerCase("pt-BR")} className="flex items-center gap-3 px-4 py-3">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground">{i + 1}</span>
+                    <span className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">{item.name}<small className="block text-xs font-normal text-muted-foreground">{item.count} unidade(s)</small></span>
+                    <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--gain)]">{brl(item.profit)}</span>
+                  </li>
+                ))}
+              </ol>
+            ) : <p className="px-4 py-6 text-sm text-muted-foreground">Nomeie suas vendas para ver os produtos aqui.</p>}
+            <div className="flex items-center justify-between gap-2 border-t border-border bg-muted px-4 py-4 text-sm text-foreground">
+              <span className="font-medium">Lucro total do top 5</span>
+              <strong className="tabular-nums">{brl(topProfit)}</strong>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );
