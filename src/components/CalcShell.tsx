@@ -104,7 +104,7 @@ export function ProfitBadge({ profit, margin }: { profit: number; margin: number
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${LEVEL_STYLE[lvl].cls}`}
     >
       {lvl === "loss" ? <Skull className="size-3" /> : null}
-      {LEVEL_STYLE[lvl].label[0].toUpperCase() + LEVEL_STYLE[lvl].label.slice(1)}
+      {LEVEL_STYLE[lvl].label.charAt(0).toUpperCase() + LEVEL_STYLE[lvl].label.slice(1)}
     </span>
   );
 }
