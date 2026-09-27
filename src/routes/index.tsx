@@ -1,18 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Receipt } from "lucide-react";
-import { LOGOS } from "@/components/CalcShell";
+import { Logo, type Brand } from "@/components/CalcShell";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Calculadora de Lucro — Shopee e Enjoei" },
+      { title: "Calculadora de Lucro — Shopee, Enjoei e Doces" },
       {
         name: "description",
-        content:
-          "Calcule quanto você recebe e quanto lucra em cada venda na Shopee e no Enjoei, já com comissões e tarifas.",
+        content: "Calcule quanto você lucra em cada venda na Shopee, no Enjoei e com seus doces, e guarde suas vendas.",
       },
-      { property: "og:title", content: "Calculadora de Lucro — Shopee e Enjoei" },
-      { property: "og:description", content: "Descontos de comissão e tarifas calculados automaticamente." },
+      { property: "og:title", content: "Calculadora de Lucro — Shopee, Enjoei e Doces" },
+      { property: "og:description", content: "Comissões, tarifas e lucro calculados automaticamente." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -20,37 +18,49 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const card =
-  "group flex animate-pop flex-col items-center gap-3 rounded-3xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:rotate-1 hover:shadow-2xl active:scale-95";
+const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string }[] = [
+  { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa" },
+  { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado" },
+  { to: "/doces", brand: "doces", label: "Doces", hint: "Custo de produção" },
+  { to: "/vendas", brand: "vendas", label: "Vendas", hint: "Tudo que você salvou" },
+];
+
+const RING: Record<Brand, string> = {
+  shopee: "hover:border-[var(--shopee)]",
+  enjoei: "hover:border-[var(--enjoei)]",
+  doces: "hover:border-[var(--doces)]",
+  vendas: "hover:border-[var(--vendas)]",
+};
 
 function Index() {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4 py-12">
-      <div className="pointer-events-none absolute -left-20 top-10 size-72 animate-blob rounded-full bg-[var(--shopee)] opacity-20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-10 size-72 animate-blob rounded-full bg-[var(--enjoei)] opacity-20 blur-3xl [animation-delay:-4s]" />
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--home-1)] via-[var(--home-2)] to-[var(--home-3)] px-4 py-12">
+      <div className="pointer-events-none absolute -left-24 top-0 size-96 animate-blob rounded-full bg-[var(--shopee)] opacity-30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 size-96 animate-blob rounded-full bg-[var(--enjoei)] opacity-30 blur-3xl [animation-delay:-3s]" />
+      <div className="pointer-events-none absolute bottom-1/3 left-1/3 size-72 animate-blob rounded-full bg-[var(--doces)] opacity-25 blur-3xl [animation-delay:-5s]" />
 
-      <h1 className="animate-fade-in text-center text-4xl font-bold tracking-tight text-foreground">
-        calculadora de lucro
+      <h1 className="relative animate-fade-in bg-gradient-to-r from-[var(--shopee)] via-[var(--doces-2)] to-[var(--enjoei)] bg-clip-text text-center text-5xl font-extrabold tracking-tight text-transparent">
+        Calculadora de Lucro
       </h1>
-      <p className="mt-2 animate-fade-in text-center text-sm text-muted-foreground">
-        escolha onde você está vendendo
+      <p className="relative mt-3 animate-fade-in text-center text-base text-muted-foreground">
+        Escolha onde você está vendendo
       </p>
 
-      <div className="relative mt-10 grid w-full max-w-xl grid-cols-3 gap-4">
-        <Link to="/shopee" className={card}>
-          <img src={LOGOS.shopee} alt="Shopee" className="size-20 animate-float rounded-2xl transition-transform group-hover:scale-110" />
-          <span className="text-lg font-semibold text-foreground">Shopee</span>
-        </Link>
-        <Link to="/enjoei" className={`${card} [animation-delay:100ms]`}>
-          <img src={LOGOS.enjoei} alt="Enjoei" className="size-20 animate-float rounded-2xl transition-transform [animation-delay:-1s] group-hover:scale-110" />
-          <span className="text-lg font-semibold text-foreground">Enjoei</span>
-        </Link>
-        <Link to="/vendas" className={`${card} [animation-delay:200ms]`}>
-          <span className="flex size-20 animate-float items-center justify-center rounded-2xl bg-primary text-primary-foreground transition-transform [animation-delay:-2s] group-hover:scale-110">
-            <Receipt className="size-10" />
-          </span>
-          <span className="text-lg font-semibold text-foreground">Vendas</span>
-        </Link>
+      <div className="relative mt-10 grid w-full max-w-3xl grid-cols-2 gap-4 md:grid-cols-4">
+        {ITEMS.map((it, i) => (
+          <Link
+            key={it.to}
+            to={it.to}
+            style={{ animationDelay: `${i * 90}ms` }}
+            className={`group flex animate-pop flex-col items-center gap-3 rounded-3xl border-2 border-transparent bg-card/80 p-6 text-center shadow-lg backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:scale-95 ${RING[it.brand]}`}
+          >
+            <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
+              <Logo brand={it.brand} className="size-20" />
+            </span>
+            <span className="text-lg font-bold text-foreground">{it.label}</span>
+            <span className="text-xs text-muted-foreground">{it.hint}</span>
+          </Link>
+        ))}
       </div>
     </div>
   );

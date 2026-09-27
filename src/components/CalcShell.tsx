@@ -1,16 +1,40 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Save, Skull } from "lucide-react";
+import { ArrowLeft, Candy, Check, Receipt, Save, Skull } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
+import { today } from "@/lib/sales";
 import shopeeLogo from "@/assets/shopee-logo.png.asset.json";
 import enjoeiLogo from "@/assets/enjoei-logo.png.asset.json";
 
-export type Brand = "shopee" | "enjoei";
-export const LOGOS: Record<Brand, string> = { shopee: shopeeLogo.url, enjoei: enjoeiLogo.url };
+export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
 export const BRAND_BG: Record<Brand, string> = {
   shopee: "bg-gradient-to-br from-[var(--shopee)] to-[var(--shopee-2)]",
   enjoei: "bg-gradient-to-br from-[var(--enjoei)] to-[var(--enjoei-2)]",
+  doces: "bg-gradient-to-br from-[var(--doces)] to-[var(--doces-2)]",
+  vendas: "bg-gradient-to-br from-[var(--vendas)] to-[var(--vendas-2)]",
 };
+
+export function Logo({ brand, className = "size-14" }: { brand: Brand; className?: string }) {
+  const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
+  if (brand === "shopee")
+    return (
+      <span className={`${base} block`}>
+        <img src={shopeeLogo.url} alt="Shopee" className="size-full scale-[1.18] object-cover" />
+      </span>
+    );
+  if (brand === "enjoei")
+    return (
+      <span className={`${base} block`}>
+        <img src={enjoeiLogo.url} alt="Enjoei" className="size-full object-cover" />
+      </span>
+    );
+  const Icon = brand === "doces" ? Candy : Receipt;
+  return (
+    <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
+      <Icon className="size-1/2" />
+    </span>
+  );
+}
 
 export function CalcShell({
   title,
@@ -30,10 +54,10 @@ export function CalcShell({
           to="/"
           className="mb-6 inline-flex items-center gap-2 text-sm opacity-80 transition-opacity hover:opacity-100"
         >
-          <ArrowLeft className="size-4" /> voltar
+          <ArrowLeft className="size-4" /> Voltar
         </Link>
         <div className="flex animate-fade-in items-center gap-3">
-          <img src={LOGOS[brand]} alt={title} className="size-14 rounded-2xl shadow-lg" />
+          <Logo brand={brand} />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
             {subtitle ? <p className="text-sm opacity-80">{subtitle}</p> : null}
@@ -80,14 +104,29 @@ export function ProfitBadge({ profit, margin }: { profit: number; margin: number
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${LEVEL_STYLE[lvl].cls}`}
     >
       {lvl === "loss" ? <Skull className="size-3" /> : null}
-      {LEVEL_STYLE[lvl].label}
+      {LEVEL_STYLE[lvl].label[0].toUpperCase() + LEVEL_STYLE[lvl].label.slice(1)}
     </span>
   );
 }
 
-export function ResultCard({ result, onSave }: { result: Result; onSave?: () => void }) {
+export type SaveInfo = { name: string; date: string; qty: number };
+
+const inputCls =
+  "w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring";
+
+export function ResultCard({
+  result,
+  onSave,
+}: {
+  result: Result;
+  onSave?: (info: SaveInfo) => void;
+}) {
   const lvl = profitLevel(result.profit, result.margin);
   const [saved, setSaved] = useState(false);
+  const [name, setName] = useState("");
+  const [date, setDate] = useState(today());
+  const [qty, setQty] = useState("1");
+  const q = Math.max(1, Math.floor(Number(qty) || 1));
   return (
     <div className="animate-scale-in space-y-3">
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -100,7 +139,7 @@ export function ResultCard({ result, onSave }: { result: Result; onSave?: () => 
           ))}
         </div>
         <div className="flex items-center justify-between bg-muted px-4 py-2.5 text-sm">
-          <span className="text-muted-foreground">Você recebe da plataforma</span>
+          <span className="text-muted-foreground">Você recebe</span>
           <span className="font-semibold tabular-nums text-foreground">{brl(result.received)}</span>
         </div>
         <div className={`px-4 py-4 transition-colors duration-500 ${LEVEL_STYLE[lvl].cls}`}>
@@ -114,22 +153,51 @@ export function ResultCard({ result, onSave }: { result: Result; onSave?: () => 
             </span>
           </div>
           <div className="mt-1 text-xs opacity-80">
-            margem sobre a venda: {result.margin.toFixed(1)}% · {LEVEL_STYLE[lvl].label}
+            Margem sobre a venda: {result.margin.toFixed(1)}% · {LEVEL_STYLE[lvl].label}
           </div>
         </div>
       </div>
       {onSave ? (
-        <button
-          onClick={() => {
-            onSave();
-            setSaved(true);
-            setTimeout(() => setSaved(false), 1800);
-          }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] active:scale-95"
-        >
-          {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
-          {saved ? "venda salva!" : "salvar venda"}
-        </button>
+        <div className="space-y-3 rounded-2xl border border-border bg-muted/50 p-3">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nome do produto vendido"
+            className={inputCls}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <label className="text-xs text-muted-foreground">
+              Data da venda
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${inputCls} mt-1`} />
+            </label>
+            <label className="text-xs text-muted-foreground">
+              Quantidade vendida
+              <input
+                type="number"
+                min={1}
+                value={qty}
+                onChange={(e) => setQty(e.target.value)}
+                className={`${inputCls} mt-1`}
+              />
+            </label>
+          </div>
+          {q > 1 ? (
+            <p className="text-xs text-muted-foreground">
+              Lucro total de {q} unidades: <b className="text-foreground">{brl(result.profit * q)}</b>
+            </p>
+          ) : null}
+          <button
+            onClick={() => {
+              onSave({ name: name.trim(), date: date || today(), qty: q });
+              setSaved(true);
+              setTimeout(() => setSaved(false), 1800);
+            }}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] active:scale-95"
+          >
+            {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
+            {saved ? "Venda salva!" : "Salvar venda"}
+          </button>
+        </div>
       ) : null}
     </div>
   );

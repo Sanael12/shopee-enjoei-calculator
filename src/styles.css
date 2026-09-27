@@ -103,6 +103,13 @@
   --enjoei-foreground: oklch(0.99 0 0);
   --shopee-2: oklch(0.6 0.22 30);
   --enjoei-2: oklch(0.26 0.12 320);
+  --doces: oklch(0.7 0.19 350);
+  --doces-2: oklch(0.55 0.22 10);
+  --vendas: oklch(0.6 0.16 165);
+  --vendas-2: oklch(0.42 0.12 200);
+  --home-1: oklch(0.95 0.05 40);
+  --home-2: oklch(0.93 0.05 330);
+  --home-3: oklch(0.94 0.05 190);
   --warn: oklch(0.85 0.17 90);
   --warn-foreground: oklch(0.25 0.05 80);
   --loss: oklch(0.15 0 0);
