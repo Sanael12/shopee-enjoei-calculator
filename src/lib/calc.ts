@@ -78,9 +78,9 @@ export const ENJOEI_MODES: Record<
   EnjoeiMode,
   { name: string; rate: number; fixed: number; desc: string }
 > = {
-  gratis: { name: "modo grátis", rate: 0, fixed: 0, desc: "Comissão 0% e tarifa R$ 0" },
-  classico: { name: "modo clássico", rate: 0.12, fixed: 12.5, desc: "Comissão 12% + tarifa fixa" },
-  turbinado: { name: "modo turbinado", rate: 0.18, fixed: 12.5, desc: "Comissão 18% + tarifa fixa" },
+  gratis: { name: "Modo grátis", rate: 0, fixed: 0, desc: "Comissão 0% e tarifa R$ 0" },
+  classico: { name: "Modo clássico", rate: 0.12, fixed: 12.5, desc: "Comissão 12% + tarifa fixa" },
+  turbinado: { name: "Modo turbinado", rate: 0.18, fixed: 12.5, desc: "Comissão 18% + tarifa fixa" },
 };
 
 export function calcEnjoei(mode: EnjoeiMode, price: number, cost: number): Result {

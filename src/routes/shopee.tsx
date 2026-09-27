@@ -33,7 +33,7 @@ function ShopeePage() {
   const result = useMemo(() => calcShopee(p, c, pix), [p, c, pix]);
 
   return (
-    <CalcShell brand="shopee" title="Shopee" subtitle="comissão e tarifas pela faixa de preço">
+    <CalcShell brand="shopee" title="Shopee" subtitle="Comissão e tarifas pela faixa de preço">
       <MoneyField label="Preço de custo" value={cost} onChange={setCost} />
       <MoneyField label="Preço de venda" value={price} onChange={setPrice} />
 
@@ -50,26 +50,29 @@ function ShopeePage() {
       {p > 0 ? (
         <>
           <div className="animate-fade-in rounded-xl bg-muted px-4 py-3 text-xs text-muted-foreground">
-            faixa: <strong className="text-foreground">{tier.label}</strong> —{" "}
+            Faixa: <strong className="text-foreground">{tier.label}</strong> —{" "}
             {(tier.rate * 100).toFixed(0)}% + R$ {tier.fixed.toFixed(2).replace(".", ",")} + R${" "}
             {SELLER_FEE.toFixed(2).replace(".", ",")} · subsídio Pix {tier.pixLabel} · embalagem R$ 1,00
           </div>
           <ResultCard
             result={result}
-            onSave={() =>
+            onSave={(i) =>
               addSale({
                 platform: "shopee",
                 detail: tier.label,
-                price: p,
-                cost: c,
-                profit: result.profit,
+                name: i.name,
+                qty: i.qty,
+                date: i.date,
+                price: p * i.qty,
+                cost: c * i.qty,
+                profit: result.profit * i.qty,
                 margin: result.margin,
               })
             }
           />
         </>
       ) : (
-        <p className="text-sm text-muted-foreground">preencha o preço de venda para calcular</p>
+        <p className="text-sm text-muted-foreground">Preencha o preço de venda para calcular</p>
       )}
     </CalcShell>
   );

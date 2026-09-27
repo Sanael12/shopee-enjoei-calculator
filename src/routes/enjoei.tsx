@@ -37,7 +37,7 @@ function EnjoeiPage() {
   const result = useMemo(() => calcEnjoei(mode, p, c), [mode, p, c]);
 
   return (
-    <CalcShell brand="enjoei" title="Enjoei" subtitle="escolha o modo de anúncio">
+    <CalcShell brand="enjoei" title="Enjoei" subtitle="Escolha o modo de anúncio">
       <div className="grid grid-cols-3 gap-2">
         {MODES.map((m) => {
           const active = m === mode;
@@ -51,13 +51,13 @@ function EnjoeiPage() {
                   : "border-border bg-card text-foreground hover:bg-accent"
               }`}
             >
-              {ENJOEI_MODES[m].name.replace("modo ", "")}
+              {ENJOEI_MODES[m].name.replace("Modo ", "")}
             </button>
           );
         })}
       </div>
       <p className="text-xs text-muted-foreground">
-        {ENJOEI_MODES[mode].desc} · envio protegido R$ 2,50 · embalagem R$ 1,00
+        {ENJOEI_MODES[mode].desc} · Envio protegido R$ 2,50 · Embalagem R$ 1,00
       </p>
 
       <MoneyField label="Preço de custo" value={cost} onChange={setCost} />
@@ -66,19 +66,22 @@ function EnjoeiPage() {
       {p > 0 ? (
         <ResultCard
           result={result}
-          onSave={() =>
+          onSave={(i) =>
             addSale({
               platform: "enjoei",
               detail: ENJOEI_MODES[mode].name,
-              price: p,
-              cost: c,
-              profit: result.profit,
+              name: i.name,
+                qty: i.qty,
+                date: i.date,
+                price: p * i.qty,
+                cost: c * i.qty,
+                profit: result.profit * i.qty,
               margin: result.margin,
             })
           }
         />
       ) : (
-        <p className="text-sm text-muted-foreground">preencha o preço de venda para calcular</p>
+        <p className="text-sm text-muted-foreground">Preencha o preço de venda para calcular</p>
       )}
     </CalcShell>
   );
