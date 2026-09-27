@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { CalcShell, MoneyField, ResultCard } from "@/components/CalcShell";
 import { calcShopee, parseMoney, shopeeTier, SELLER_FEE } from "@/lib/calc";
+import { addSale } from "@/lib/sales";
 
 export const Route = createFileRoute("/shopee")({
   head: () => ({
@@ -13,10 +14,9 @@ export const Route = createFileRoute("/shopee")({
           "Informe custo e preço de venda e veja quanto sobra depois da comissão, da tarifa fixa e da taxa de vendedor CPF da Shopee.",
       },
       { property: "og:title", content: "Calculadora Shopee — comissão, tarifa e lucro" },
-      {
-        property: "og:description",
-        content: "Cálculo automático por faixa de preço, com subsídio Pix opcional.",
-      },
+      { property: "og:description", content: "Cálculo automático por faixa de preço, com subsídio Pix opcional." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ShopeePage,
@@ -33,7 +33,7 @@ function ShopeePage() {
   const result = useMemo(() => calcShopee(p, c, pix), [p, c, pix]);
 
   return (
-    <CalcShell title="Shopee" subtitle="comissão e tarifas calculadas pela faixa de preço">
+    <CalcShell brand="shopee" title="Shopee" subtitle="comissão e tarifas pela faixa de preço">
       <MoneyField label="Preço de custo" value={cost} onChange={setCost} />
       <MoneyField label="Preço de venda" value={price} onChange={setPrice} />
 
@@ -49,12 +49,24 @@ function ShopeePage() {
 
       {p > 0 ? (
         <>
-          <div className="rounded-xl bg-muted px-4 py-3 text-xs text-muted-foreground">
+          <div className="animate-fade-in rounded-xl bg-muted px-4 py-3 text-xs text-muted-foreground">
             faixa: <strong className="text-foreground">{tier.label}</strong> —{" "}
             {(tier.rate * 100).toFixed(0)}% + R$ {tier.fixed.toFixed(2).replace(".", ",")} + R${" "}
-            {SELLER_FEE.toFixed(2).replace(".", ",")} · subsídio Pix {tier.pixLabel}
+            {SELLER_FEE.toFixed(2).replace(".", ",")} · subsídio Pix {tier.pixLabel} · embalagem R$ 1,00
           </div>
-          <ResultCard result={result} />
+          <ResultCard
+            result={result}
+            onSave={() =>
+              addSale({
+                platform: "shopee",
+                detail: tier.label,
+                price: p,
+                cost: c,
+                profit: result.profit,
+                margin: result.margin,
+              })
+            }
+          />
         </>
       ) : (
         <p className="text-sm text-muted-foreground">preencha o preço de venda para calcular</p>
