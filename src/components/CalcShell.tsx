@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
-import shopeeLogo from "@/assets/shopee-logo-clean.png.asset.json";
+import shopeeLogo from "@/assets/shopee-logo-requested.png.asset.json";
 import enjoeiLogo from "@/assets/enjoei-logo.png.asset.json";
 
 export type Brand = "shopee" | "enjoei" | "doces" | "vendas";

@@ -24,7 +24,8 @@ export const today = () => {
 
 export function loadSales(): Sale[] {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || "[]");
+    const saved: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
+    return Array.isArray(saved) ? saved : [];
   } catch {
     return [];
   }
@@ -46,7 +47,14 @@ export function formatDate(d: string) {
 
 export function useSales() {
   const [sales, setSales] = useState<Sale[]>([]);
-  useEffect(() => setSales(loadSales()), []);
+  useEffect(() => {
+    setSales(loadSales());
+    const sync = (event: StorageEvent) => {
+      if (event.key === KEY || event.key === null) setSales(loadSales());
+    };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
   return {
     sales,
     update: (id: string, patch: Partial<Sale>) => {
