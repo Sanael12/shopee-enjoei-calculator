@@ -3,8 +3,8 @@ import { ArrowLeft, Calendar, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { BRAND_BG, Logo, ProfitBadge } from "@/components/CalcShell";
 import { brl, LEVEL_STYLE, profitLevel } from "@/lib/calc";
-import { formatDate, useSales, type Sale } from "@/lib/sales";
-import trophy from "@/assets/trofeu-ranking.png";
+import { formatDate, useSales, type Platform, type Sale } from "@/lib/sales";
+import trophy from "@/assets/trofeu-top3.png.asset.json";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/vendas")({
@@ -103,20 +103,20 @@ function VendasPage() {
     platform,
     items: sales.filter((sale) => sale.platform === platform),
   })).filter((group) => group.items.length > 0);
-  const products = new Map<string, { name: string; profit: number; count: number }>();
+  const products = new Map<string, { name: string; platform: Platform; profit: number; count: number }>();
   for (const sale of sales) {
     const name = sale.name?.trim();
     if (!name) continue;
-    const key = name.toLocaleLowerCase("pt-BR");
+    const key = `${sale.platform}:${name.toLocaleLowerCase("pt-BR")}`;
     const current = products.get(key);
     if (current) {
       current.profit += sale.profit;
       current.count += sale.qty || 1;
     } else {
-      products.set(key, { name, profit: sale.profit, count: sale.qty || 1 });
+      products.set(key, { name, platform: sale.platform, profit: sale.profit, count: sale.qty || 1 });
     }
   }
-  const top = [...products.values()].sort((a, b) => b.profit - a.profit).slice(0, 5);
+  const top = [...products.values()].sort((a, b) => b.profit - a.profit).slice(0, 3);
   const topProfit = top.reduce((total, product) => total + product.profit, 0);
 
   return (
@@ -151,6 +151,10 @@ function VendasPage() {
                   <div className="space-y-3">
                     {items.map((sale, i) => <SaleRow key={sale.id} s={sale} i={i} update={update} remove={remove} />)}
                   </div>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-[var(--shopee-foreground)]/30 pt-3 text-sm text-[var(--shopee-foreground)]">
+                    <span>Investido: <strong className="tabular-nums">{brl(items.reduce((sum, sale) => sum + sale.cost, 0))}</strong></span>
+                    <span>Lucro total: <strong className="tabular-nums">{brl(items.reduce((sum, sale) => sum + sale.profit, 0))}</strong></span>
+                  </div>
                 </section>
               ))}
             </div>
@@ -181,19 +185,19 @@ function VendasPage() {
           </Button>
         ) : null}
           </div>
-          <aside className="order-first overflow-hidden rounded-2xl bg-card shadow-xl lg:order-last" aria-label="Top 5 produtos por lucro">
+          <aside className="order-first overflow-hidden rounded-2xl bg-card shadow-xl lg:order-last" aria-label="Top 3 produtos por lucro">
             <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
-              <img src={trophy} alt="Troféu" width={768} height={768} loading="lazy" className="size-14 object-contain" />
+              <img src={trophy.url} alt="Troféu" width={139} height={149} className="size-14 object-contain" />
               <div>
-                <h2 className="text-lg font-bold text-foreground">Top 5 produtos</h2>
+                <h2 className="text-lg font-bold text-foreground">Top 3 produtos</h2>
                 <p className="text-xs text-muted-foreground">Maiores lucros acumulados</p>
               </div>
             </div>
             {top.length > 0 ? (
               <ol className="divide-y divide-border">
-                {top.map((item, i) => (
-                  <li key={item.name.toLocaleLowerCase("pt-BR")} className="flex items-center gap-3 px-4 py-3">
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground">{i + 1}</span>
+                {top.map((item) => (
+                  <li key={`${item.platform}:${item.name.toLocaleLowerCase("pt-BR")}`} className="flex items-center gap-3 px-4 py-3">
+                    <Logo brand={item.platform} className="size-8" />
                     <span className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">{item.name}<small className="block text-xs font-normal text-muted-foreground">{item.count} unidade(s)</small></span>
                     <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--gain)]">{brl(item.profit)}</span>
                   </li>
@@ -201,7 +205,7 @@ function VendasPage() {
               </ol>
             ) : <p className="px-4 py-6 text-sm text-muted-foreground">Nomeie suas vendas para ver os produtos aqui.</p>}
             <div className="flex items-center justify-between gap-2 border-t border-border bg-muted px-4 py-4 text-sm text-foreground">
-              <span className="font-medium">Lucro total do top 5</span>
+               <span className="font-medium">Lucro total do top 3</span>
               <strong className="tabular-nums">{brl(topProfit)}</strong>
             </div>
           </aside>
