@@ -11,4 +11,4 @@
 - [x] Reforçar transições entre páginas e verificar no navegador
 - [x] Criar armazenamento permanente protegido por conta
 - [x] Importar vendas guardadas neste navegador ao entrar
-- [ ] Verificar persistência e fluxo de acesso no navegador
+- [x] Verificar persistência local ao recarregar e fluxo de acesso no navegador

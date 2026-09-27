@@ -109,7 +109,9 @@ export function useSales() {
       if (!user) {
         localStorage.setItem(KEY, JSON.stringify(loadLocal().map(s => s.id === id ? { ...s, ...patch } : s)));
       } else {
-        const changes = { ...(patch.name !== undefined ? { name: patch.name } : {}), ...(patch.date !== undefined ? { date: patch.date } : {}) };
+        const changes: { name?: string; date?: string } = {};
+        if (patch.name !== undefined) changes.name = patch.name;
+        if (patch.date !== undefined) changes.date = patch.date;
         const { error: e } = await supabase.from("sales").update(changes).eq("id", id).eq("user_id", user.id);
         if (e) throw e;
       }
