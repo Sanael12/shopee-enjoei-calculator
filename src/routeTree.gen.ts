@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EnjoeiRouteImport } from './routes/enjoei'
 import { Route as ShopeeRouteImport } from './routes/shopee'
+import { Route as VendasRouteImport } from './routes/vendas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ShopeeRoute = ShopeeRouteImport.update({
   path: '/shopee',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendasRoute = VendasRouteImport.update({
+  id: '/vendas',
+  path: '/vendas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
+  '/vendas': typeof VendasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
+  '/vendas': typeof VendasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/enjoei': typeof EnjoeiRoute
   '/shopee': typeof ShopeeRoute
+  '/vendas': typeof VendasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/enjoei' | '/shopee'
+  fullPaths: '/' | '/enjoei' | '/shopee' | '/vendas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/enjoei' | '/shopee'
-  id: '__root__' | '/' | '/enjoei' | '/shopee'
+  to: '/' | '/enjoei' | '/shopee' | '/vendas'
+  id: '__root__' | '/' | '/enjoei' | '/shopee' | '/vendas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EnjoeiRoute: typeof EnjoeiRoute
   ShopeeRoute: typeof ShopeeRoute
+  VendasRoute: typeof VendasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopeeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vendas': {
+      id: '/vendas'
+      path: '/vendas'
+      fullPath: '/vendas'
+      preLoaderRoute: typeof VendasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EnjoeiRoute: EnjoeiRoute,
   ShopeeRoute: ShopeeRoute,
+  VendasRoute: VendasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
