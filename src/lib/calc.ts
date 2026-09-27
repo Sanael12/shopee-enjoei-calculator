@@ -37,6 +37,22 @@ export function shopeeTier(price: number): ShopeeTier {
 }
 
 export const SELLER_FEE = 3;
+export const EMBALAGEM = 1;
+export const ENVIO_PROTEGIDO = 2.5;
+
+export type Level = "loss" | "bad" | "mid" | "good";
+export function profitLevel(profit: number, margin: number): Level {
+  if (profit < 0) return "loss";
+  if (margin < 20) return "bad";
+  if (margin <= 45) return "mid";
+  return "good";
+}
+export const LEVEL_STYLE: Record<Level, { cls: string; label: string }> = {
+  loss: { cls: "bg-[var(--loss)] text-[var(--loss-foreground)]", label: "prejuízo" },
+  bad: { cls: "bg-destructive text-destructive-foreground", label: "ruim" },
+  mid: { cls: "bg-[var(--warn)] text-[var(--warn-foreground)]", label: "médio" },
+  good: { cls: "bg-[var(--gain)] text-[var(--gain-foreground)]", label: "bom" },
+};
 
 export function calcShopee(price: number, cost: number, applyPix: boolean): Result {
   const tier = shopeeTier(price);
@@ -50,13 +66,10 @@ export function calcShopee(price: number, cost: number, applyPix: boolean): Resu
   ];
   if (applyPix) lines.push({ label: `Subsídio Pix (${tier.pixLabel})`, value: -pix });
   const received = price - commission - tier.fixed - SELLER_FEE - pix;
+  lines.push({ label: "Embalagem", value: -EMBALAGEM });
   lines.push({ label: "Custo do produto", value: -cost });
-  return {
-    lines,
-    received,
-    profit: received - cost,
-    margin: price > 0 ? ((received - cost) / price) * 100 : 0,
-  };
+  const profit = received - EMBALAGEM - cost;
+  return { lines, received, profit, margin: price > 0 ? (profit / price) * 100 : 0 };
 }
 
 export type EnjoeiMode = "gratis" | "classico" | "turbinado";
@@ -73,17 +86,15 @@ export const ENJOEI_MODES: Record<
 export function calcEnjoei(mode: EnjoeiMode, price: number, cost: number): Result {
   const m = ENJOEI_MODES[mode];
   const commission = price * m.rate;
-  const received = price - commission - m.fixed;
+  const received = price - commission - m.fixed - ENVIO_PROTEGIDO;
   const lines: Line[] = [
     { label: "Valor da venda", value: price },
     { label: `Comissão (${(m.rate * 100).toFixed(0)}%)`, value: -commission },
     { label: "Tarifa fixa", value: -m.fixed },
+    { label: "Envio protegido", value: -ENVIO_PROTEGIDO },
+    { label: "Embalagem", value: -EMBALAGEM },
     { label: "Custo do produto", value: -cost },
   ];
-  return {
-    lines,
-    received,
-    profit: received - cost,
-    margin: price > 0 ? ((received - cost) / price) * 100 : 0,
-  };
+  const profit = received - EMBALAGEM - cost;
+  return { lines, received, profit, margin: price > 0 ? (profit / price) * 100 : 0 };
 }
