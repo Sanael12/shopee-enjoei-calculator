@@ -120,10 +120,12 @@ export function ResultCard({
   onSave,
 }: {
   result: Result;
-  onSave?: (info: SaveInfo) => void;
+  onSave?: (info: SaveInfo) => Promise<"saved" | "needsAuth">;
 }) {
   const lvl = profitLevel(result.profit, result.margin);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
   const [name, setName] = useState("");
   const [date, setDate] = useState(today());
   const [qty, setQty] = useState("1");
@@ -188,16 +190,27 @@ export function ResultCard({
             </p>
           ) : null}
           <Button
-            onClick={() => {
-              onSave({ name: name.trim(), date: date || today(), qty: q });
-              setSaved(true);
-              setTimeout(() => setSaved(false), 1800);
+            disabled={saving}
+            onClick={async () => {
+              setSaving(true);
+              setSaveMessage("");
+              try {
+                const status = await onSave({ name: name.trim(), date: date || today(), qty: q });
+                setSaved(true);
+                if (status === "needsAuth") setSaveMessage("Venda guardada neste navegador. Entre na sua conta para mantê-la e acessá-la em outros aparelhos.");
+                setTimeout(() => setSaved(false), 1800);
+              } catch {
+                setSaveMessage("Não foi possível salvar. Tente novamente.");
+              } finally {
+                setSaving(false);
+              }
             }}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] active:scale-95"
           >
             {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
-            {saved ? "Venda salva!" : "Salvar venda"}
+            {saving ? "Salvando..." : saved ? "Venda salva!" : "Salvar venda"}
           </Button>
+          {saveMessage ? <p role="status" className="text-xs text-muted-foreground">{saveMessage} <Link to="/auth" className="font-semibold underline">Entrar</Link></p> : null}
         </div>
       ) : null}
     </div>

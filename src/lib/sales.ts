@@ -1,44 +1,69 @@
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 
 export type Platform = "shopee" | "enjoei" | "doces";
-
 export type Sale = {
   id: string;
   platform: Platform;
   detail: string;
   name?: string;
   qty?: number;
-  price: number; // total (já multiplicado pela quantidade)
+  price: number;
   cost: number;
   profit: number;
   margin: number;
-  date: string; // yyyy-mm-dd
+  date: string;
 };
 
 const KEY = "calc-vendas";
-
 export const today = () => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 };
 
-export function loadSales(): Sale[] {
+function loadLocal(): Sale[] {
   try {
-    const saved: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(saved) ? saved : [];
+    const value: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
+    return Array.isArray(value) ? value.filter((s): s is Sale => Boolean(s && typeof s === "object" && typeof s.id === "string" && ["shopee", "enjoei", "doces"].includes(s.platform) && typeof s.price === "number" && typeof s.cost === "number" && typeof s.profit === "number" && typeof s.margin === "number" && typeof s.date === "string")) : [];
   } catch {
     return [];
   }
 }
-
-function save(all: Sale[]) {
-  localStorage.setItem(KEY, JSON.stringify(all));
+function toSale(row: Tables<"sales">): Sale {
+  return { id: row.id, platform: row.platform as Platform, detail: row.detail, name: row.name, qty: row.qty, price: Number(row.price), cost: Number(row.cost), profit: Number(row.profit), margin: Number(row.margin), date: row.date };
 }
 
-export function addSale(s: Omit<Sale, "id">) {
-  const all = loadSales();
-  all.unshift({ ...s, id: crypto.randomUUID() });
-  save(all);
+async function importLocal(userId: string) {
+  const pending = loadLocal();
+  if (!pending.length) return;
+  // Stable IDs make retries safe if a network response is lost after a successful write.
+  for (const sale of pending) {
+    const { error } = await supabase.from("sales").upsert({
+      id: sale.id, user_id: userId, platform: sale.platform, detail: sale.detail || "",
+      name: sale.name || "", qty: sale.qty || 1, price: sale.price, cost: sale.cost,
+      profit: sale.profit, margin: sale.margin, date: sale.date.slice(0, 10),
+    }, { onConflict: "id" });
+    if (error) throw error;
+    // Remove only successfully imported records, keeping anything saved in another tab.
+    localStorage.setItem(KEY, JSON.stringify(loadLocal().filter((item) => item.id !== sale.id)));
+  }
+}
+
+export async function addSale(s: Omit<Sale, "id">): Promise<"saved" | "needsAuth"> {
+  const sale = { ...s, id: crypto.randomUUID() };
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    localStorage.setItem(KEY, JSON.stringify([sale, ...loadLocal()]));
+    return "needsAuth";
+  }
+  const { error } = await supabase.from("sales").insert({
+    id: sale.id, user_id: user.id, platform: sale.platform, detail: sale.detail,
+    name: sale.name || "", qty: sale.qty || 1, price: sale.price, cost: sale.cost,
+    profit: sale.profit, margin: sale.margin, date: sale.date.slice(0, 10),
+  });
+  if (error) throw error;
+  return "saved";
 }
 
 export function formatDate(d: string) {
@@ -47,27 +72,75 @@ export function formatDate(d: string) {
 
 export function useSales() {
   const [sales, setSales] = useState<Sale[]>([]);
-  useEffect(() => {
-    setSales(loadSales());
-    const sync = (event: StorageEvent) => {
-      if (event.key === KEY || event.key === null) setSales(loadSales());
-    };
-    window.addEventListener("storage", sync);
-    return () => window.removeEventListener("storage", sync);
-  }, []);
-  return {
-    sales,
-    update: (id: string, patch: Partial<Sale>) => {
-      save(loadSales().map((s) => (s.id === id ? { ...s, ...patch } : s)));
-      setSales(loadSales());
-    },
-    remove: (id: string) => {
-      save(loadSales().filter((s) => s.id !== id));
-      setSales(loadSales());
-    },
-    clear: () => {
-      localStorage.removeItem(KEY);
-      setSales([]);
-    },
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
+  const refresh = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setSignedIn(Boolean(user));
+      if (!user) {
+        setSales(loadLocal());
+        return;
+      }
+      await importLocal(user.id);
+      const { data, error: readError } = await supabase.from("sales").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+      if (readError) throw readError;
+      setSales((data || []).map(toSale));
+    } catch {
+      setError("Não foi possível carregar suas vendas. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
+  useEffect(() => {
+    void refresh();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") setTimeout(() => void refresh(), 0);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  const update = async (id: string, patch: Partial<Sale>) => {
+    setError("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        localStorage.setItem(KEY, JSON.stringify(loadLocal().map(s => s.id === id ? { ...s, ...patch } : s)));
+      } else {
+        const changes: { name?: string; date?: string } = {};
+        if (patch.name !== undefined) changes.name = patch.name;
+        if (patch.date !== undefined) changes.date = patch.date;
+        const { error: e } = await supabase.from("sales").update(changes).eq("id", id).eq("user_id", user.id);
+        if (e) throw e;
+      }
+      await refresh();
+    } catch { setError("Não foi possível editar a venda."); }
+  };
+  const remove = async (id: string) => {
+    setError("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) localStorage.setItem(KEY, JSON.stringify(loadLocal().filter(s => s.id !== id)));
+      else {
+        const { error: e } = await supabase.from("sales").delete().eq("id", id).eq("user_id", user.id);
+        if (e) throw e;
+      }
+      await refresh();
+    } catch { setError("Não foi possível apagar a venda."); }
+  };
+  const clear = async () => {
+    setError("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) localStorage.removeItem(KEY);
+      else {
+        const { error: e } = await supabase.from("sales").delete().eq("user_id", user.id);
+        if (e) throw e;
+      }
+      await refresh();
+    } catch { setError("Não foi possível apagar as vendas."); }
+  };
+  return { sales, loading, error, signedIn, refresh, update, remove, clear };
 }

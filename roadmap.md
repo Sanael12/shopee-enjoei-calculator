@@ -9,3 +9,6 @@
 - [x] Trocar troféu enviado e mostrar top 3 com logo da plataforma
 - [x] Mostrar investimento e lucro total em cada plataforma
 - [x] Reforçar transições entre páginas e verificar no navegador
+- [x] Criar armazenamento permanente protegido por conta
+- [x] Importar vendas guardadas neste navegador ao entrar
+- [x] Verificar persistência local ao recarregar e fluxo de acesso no navegador

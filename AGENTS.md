@@ -9,6 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep sales in browser storage for this single-device calculator; no connected backend is available, so saved sales remain local to that browser.
+- Keep sales in Lovable Cloud scoped by authenticated user; keep unsynced browser sales until they import successfully, so existing sales aren't lost.
 - Use one shared calculator result/save form across Shopee, Enjoei, and Doces so quantity multiplies each per-item total consistently.
 - Use TanStack Router view transitions for option navigation and CSS reduced-motion overrides, so navigation animates without replacing the router or blocking accessible motion settings.

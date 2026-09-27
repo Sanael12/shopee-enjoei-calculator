@@ -6,6 +6,7 @@ import { brl, LEVEL_STYLE, profitLevel } from "@/lib/calc";
 import { formatDate, useSales, type Platform, type Sale } from "@/lib/sales";
 import trophy from "@/assets/trofeu-top3.png.asset.json";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/vendas")({
   head: () => ({
@@ -93,7 +94,7 @@ function SaleRow({ s, i, update, remove }: { s: Sale; i: number; update: (id: st
 }
 
 function VendasPage() {
-  const { sales, update, remove, clear } = useSales();
+  const { sales, loading, error, signedIn, refresh, update, remove, clear } = useSales();
   const invested = sales.reduce((a, s) => a + s.cost, 0);
   const sold = sales.reduce((a, s) => a + s.price, 0);
   const profit = sales.reduce((a, s) => a + s.profit, 0);
@@ -132,11 +133,17 @@ function VendasPage() {
             <p className="text-sm opacity-80">{sales.length} venda(s) salva(s)</p>
           </div>
         </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-[var(--shopee-foreground)]">
+          <span>{signedIn ? "Vendas guardadas na sua conta" : "Entre na sua conta para guardar as vendas permanentemente."}</span>
+          {signedIn ? <Button variant="outline" size="sm" onClick={() => void supabase.auth.signOut()}>Sair</Button> : <Button asChild variant="outline" size="sm"><Link to="/auth">Entrar ou criar conta</Link></Button>}
+        </div>
+        {error ? <div role="alert" className="mt-3 text-sm text-[var(--shopee-foreground)]">{error} <Button variant="link" onClick={() => void refresh()}>Tentar novamente</Button></div> : null}
 
         <div className="mt-6 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0">
             <div className="space-y-6">
-              {sales.length === 0 ? (
+              {loading ? <p className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground">Carregando vendas...</p> : null}
+              {!loading && !error && sales.length === 0 ? (
                 <p className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground">
                   Nenhuma venda ainda — calcule e toque em “Salvar venda”
                 </p>
