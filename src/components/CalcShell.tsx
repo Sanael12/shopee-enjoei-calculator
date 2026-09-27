@@ -3,7 +3,8 @@ import { ArrowLeft, Candy, Check, Receipt, Save, Skull } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
-import shopeeLogo from "@/assets/shopee-logo.png.asset.json";
+import { Button } from "@/components/ui/button";
+import shopeeLogo from "@/assets/shopee-logo-clean.png.asset.json";
 import enjoeiLogo from "@/assets/enjoei-logo.png.asset.json";
 
 export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
@@ -19,7 +20,7 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   if (brand === "shopee")
     return (
       <span className={`${base} block`}>
-        <img src={shopeeLogo.url} alt="Shopee" className="size-full scale-[1.18] object-cover" />
+        <img src={shopeeLogo.url} alt="Shopee" className="size-full object-cover" />
       </span>
     );
   if (brand === "enjoei")
@@ -186,7 +187,7 @@ export function ResultCard({
               Lucro total de {q} unidades: <b className="text-foreground">{brl(result.profit * q)}</b>
             </p>
           ) : null}
-          <button
+          <Button
             onClick={() => {
               onSave({ name: name.trim(), date: date || today(), qty: q });
               setSaved(true);
@@ -196,7 +197,7 @@ export function ResultCard({
           >
             {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
             {saved ? "Venda salva!" : "Salvar venda"}
-          </button>
+          </Button>
         </div>
       ) : null}
     </div>
