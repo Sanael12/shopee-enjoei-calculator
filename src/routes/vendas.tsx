@@ -91,7 +91,6 @@ function SaleRow({ s, i, update, remove }: { s: Sale; i: number; update: (id: st
     </div>
   );
 }
-
 function VendasPage() {
   const { sales, loading, error, signedIn, refresh, update, remove, clear } = useSales();
   const invested = sales.reduce((a, s) => a + s.cost, 0);
@@ -99,10 +98,12 @@ function VendasPage() {
   const profit = sales.reduce((a, s) => a + s.profit, 0);
   const margin = sold > 0 ? (profit / sold) * 100 : 0;
   const lvl = profitLevel(profit, margin);
+  
   const groups = (["shopee", "enjoei", "doces"] as const).map((platform) => ({
     platform,
     items: sales.filter((sale) => sale.platform === platform),
   })).filter((group) => group.items.length > 0);
+  
   const products = new Map<string, { name: string; platform: Platform; profit: number; count: number }>();
   for (const sale of sales) {
     const name = sale.name?.trim();
@@ -117,7 +118,6 @@ function VendasPage() {
     }
   }
   const top = [...products.values()].sort((a, b) => b.profit - a.profit).slice(0, 3);
-  const topProfit = top.reduce((total, product) => total + product.profit, 0);
 
   return (
     <div className={`min-h-screen px-4 py-8 ${BRAND_BG.vendas}`}>
@@ -152,69 +152,68 @@ function VendasPage() {
                   <div className="mb-3 flex items-center gap-3 text-[var(--shopee-foreground)]">
                     <Logo brand={platform} className="size-9" />
                     <h2 className="text-lg font-bold">{PLATFORM_NAME[platform]}</h2>
-                    <span className="text-xs opacity-80">{items.length} venda(s)</span>
                   </div>
                   <div className="space-y-3">
-                    {items.map((sale, i) => <SaleRow key={sale.id} s={sale} i={i} update={update} remove={remove} />)}
-                  </div>
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-[var(--shopee-foreground)]/30 pt-3 text-sm text-[var(--shopee-foreground)]">
-                    <span>Investido: <strong className="tabular-nums">{brl(items.reduce((sum, sale) => sum + sale.cost, 0))}</strong></span>
-                    <span>Lucro total: <strong className="tabular-nums">{brl(items.reduce((sum, sale) => sum + sale.profit, 0))}</strong></span>
+                    {items.map((s, idx) => (
+                      <SaleRow key={s.id} s={s} i={idx} update={update} remove={remove} />
+                    ))}
                   </div>
                 </section>
               ))}
             </div>
-
-        {sales.length > 0 ? (
-          <div className="mt-6 animate-scale-in overflow-hidden rounded-2xl bg-card shadow-2xl">
-            <div className="flex justify-between px-4 py-3 text-sm">
-              <span className="text-muted-foreground">Total gasto (custo)</span>
-              <span className="font-semibold tabular-nums text-foreground">{brl(invested)}</span>
-            </div>
-            <div className="flex justify-between border-t border-border px-4 py-3 text-sm">
-              <span className="text-muted-foreground">Total vendido</span>
-              <span className="font-semibold tabular-nums text-foreground">{brl(sold)}</span>
-            </div>
-            <div className={`flex items-baseline justify-between px-4 py-4 ${LEVEL_STYLE[lvl].cls}`}>
-              <span className="text-sm font-medium">Total ganho (lucro)</span>
-              <span className="text-2xl font-bold tabular-nums">{brl(profit)}</span>
-            </div>
           </div>
-        ) : null}
 
-        {sales.length > 0 ? (
-          <Button variant="ghost"
-            onClick={() => confirm("Apagar todas as vendas?") && clear()}
-            className="mt-4 w-full text-center text-xs text-[var(--shopee-foreground)] opacity-70 hover:opacity-100"
-          >
-            Apagar todas
-          </Button>
-        ) : null}
-          </div>
-          <aside className="order-first overflow-hidden rounded-2xl bg-card shadow-xl lg:order-last" aria-label="Top 3 produtos por lucro">
-            <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
-              <img src="/trofeu-top3.png" alt="Troféu" width={139} height={149} className="size-14 object-contain" />
-              <div>
-                <h2 className="text-lg font-bold text-foreground">Top 3 produtos</h2>
-                <p className="text-xs text-muted-foreground">Maiores lucros acumulados</p>
+          {/* Barra Lateral / Resumo Financeiro */}
+          <div className="space-y-5">
+            <div className="rounded-2xl bg-card p-4 shadow-xl">
+              <h2 className="text-sm font-semibold text-muted-foreground">Resumo Geral</h2>
+              <div className="mt-3 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Investido:</span>
+                  <span className="font-medium">{brl(invested)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Faturamento:</span>
+                  <span className="font-medium">{brl(sold)}</span>
+                </div>
+                <div className={`mt-2 flex justify-between rounded-xl p-3 ${LEVEL_STYLE[lvl].cls}`}>
+                  <span className="font-medium">Lucro Total:</span>
+                  <div className="text-right">
+                    <span className="block font-bold">{brl(profit)}</span>
+                    <span className="text-xs opacity-80">Margem: {margin.toFixed(1)}%</span>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* SEÇÃO DO TROFÉU: Exibindo o Top 3 Produtos */}
             {top.length > 0 ? (
-              <ol className="divide-y divide-border">
-                {top.map((item) => (
-                  <li key={`${item.platform}:${item.name.toLocaleLowerCase("pt-BR")}`} className="flex items-center gap-3 px-4 py-3">
-                    <Logo brand={item.platform} className="size-8" />
-                    <span className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">{item.name}<small className="block text-xs font-normal text-muted-foreground">{item.count} unidade(s)</small></span>
-                    <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--gain)]">{brl(item.profit)}</span>
-                  </li>
-                ))}
-              </ol>
-            ) : <p className="px-4 py-6 text-sm text-muted-foreground">Nomeie suas vendas para ver os produtos aqui.</p>}
-            <div className="flex items-center justify-between gap-2 border-t border-border bg-muted px-4 py-4 text-sm text-foreground">
-               <span className="font-medium">Lucro total do top 3</span>
-              <strong className="tabular-nums">{brl(topProfit)}</strong>
-            </div>
-          </aside>
+              <div className="rounded-2xl bg-card p-4 shadow-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  {/* ALTERAÇÃO: Puxando o troféu direto da public */}
+                  <img src="/trofeu-top3.png" alt="Troféu" className="size-6 object-contain" />
+                  <h2 className="text-sm font-bold text-foreground">Top Produtos Rentáveis</h2>
+                </div>
+                <div className="space-y-3">
+                  {top.map((product, index) => (
+                    <div key={index} className="flex items-center justify-between text-xs border-b border-border/40 pb-2 last:border-0 last:pb-0">
+                      <div className="min-w-0 flex-1 pr-2">
+                        <p className="font-semibold text-foreground truncate">{product.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{PLATFORM_NAME[product.platform]} · {product.count} un.</p>
+                      </div>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 shrink-0">{brl(product.profit)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {!loading && sales.length > 0 ? (
+              <Button variant="destructive" size="sm" className="w-full rounded-xl" onClick={() => { if(confirm("Apagar tudo permanentemente?")) void clear() }}>
+                Limpar Histórico
+              </Button>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
