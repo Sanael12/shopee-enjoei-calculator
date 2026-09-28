@@ -57,21 +57,17 @@ function Index() {
           >
             <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
               
-              {/* LOGO OFICIAL DA SHOPEE EM VETOR PURA (CORRIGIDA) */}
+              {/* IMAGEM PNG DA SHOPEE SALVA NA PASTA PUBLIC */}
               {it.brand === "shopee" && (
-                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-3.5">
-                  <svg viewBox="0 0 24 24" className="w-full h-full fill-white" xmlns="http://w3.org">
-                    <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm1 12.5h-2v.5c0 .28-.22.5-.5.5h-.5c-.28 0-.5-.22-.5-.5v-.5c-.83-.08-1.5-.54-1.78-1.18-.1-.23 0-.5.23-.6l.45-.22c.18-.09.4 0 .5.17.15.34.49.58.9.58.5 0 .82-.26.82-.58 0-.25-.17-.4-.66-.54l-.82-.23c-.85-.24-1.25-.76-1.25-1.4 0-.59.42-1.07 1.05-1.3v-.35c0-.28.22-.5.5-.5h.5c.28 0 .5.22.5.5v.35c.6.09 1.09.43 1.34.93.1.2.02.47-.18.57l-.37.2c-.17.09-.4 0-.5-.16-.14-.24-.39-.4-.79-.4-.41 0-.66.19-.66.43 0 .22.18.33.61.45l.83.24c.83.24 1.28.75 1.28 1.39 0 .42-.16.79-.42 1.04z" />
-                  </svg>
+                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-3">
+                  <img src="/shopee.png" alt="Shopee" className="w-full h-full object-contain" />
                 </span>
               )}
 
-              {/* LOGO OFICIAL DO ENJOEI EM VETOR PURA (CORRIGIDA) */}
+              {/* IMAGEM PNG DO ENJOEI SALVA NA PASTA PUBLIC */}
               {it.brand === "enjoei" && (
                 <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#2E0025] flex items-center justify-center p-3">
-                  <svg viewBox="0 0 100 100" className="w-full h-full fill-white" xmlns="http://w3.org">
-                    <path d="M50 15c-19.3 0-35 15.7-35 35s15.7 35 35 35 35-15.7 35-35-15.7-35-35-35zm0 54c-10.5 0-19-8.5-19-19s8.5-19 19-19 19 8.5 19 19-8.5 19-19 19zm-13.6-19h27.2c0 7.5-6.1 13.6-13.6 13.6S36.4 57.5 36.4 50z"/>
-                  </svg>
+                  <img src="/enjoei.png" alt="Enjoei" className="w-full h-full object-contain" />
                 </span>
               )}
 
