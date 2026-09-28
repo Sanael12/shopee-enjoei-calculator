@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Logo, type Brand } from "@/components/CalcShell";
+import { Candy, Receipt } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,9 +18,11 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string }[] = [
-  { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa" },
-  { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado" },
+type Brand = "shopee" | "enjoei" | "doces" | "vendas";
+
+const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string; imgUrl?: string }[] = [
+  { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa", imgUrl: "https://rawpixel.com" },
+  { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado", imgUrl: "https://enjoei.com.br" },
   { to: "/doces", brand: "doces", label: "Doces", hint: "Custo de produção" },
   { to: "/vendas", brand: "vendas", label: "Vendas", hint: "Tudo que você salvou" },
 ];
@@ -31,6 +33,33 @@ const RING: Record<Brand, string> = {
   doces: "hover:border-[var(--doces)]",
   vendas: "hover:border-[var(--vendas)]",
 };
+
+const BRAND_BG: Record<Brand, string> = {
+  shopee: "bg-gradient-to-br from-[var(--shopee)] to-[var(--shopee-2)]",
+  enjoei: "bg-gradient-to-br from-[var(--enjoei)] to-[var(--enjoei-2)]",
+  doces: "bg-gradient-to-br from-[var(--doces)] to-[var(--doces-2)]",
+  vendas: "bg-gradient-to-br from-[var(--vendas)] to-[var(--vendas-2)]",
+};
+
+function LocalLogo({ brand, imgUrl }: { brand: Brand; imgUrl?: string }) {
+  const base = "size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-white flex items-center justify-center p-2.5";
+  
+  if (imgUrl) {
+    return (
+      <span className={base}>
+        <img src={imgUrl} alt={brand} className="w-full h-full object-contain" />
+      </span>
+    );
+  }
+
+  const Icon = brand === "doces" ? Candy : Receipt;
+  const standardBase = "size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg";
+  return (
+    <span className={`${standardBase} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
+      <Icon className="size-1/2" />
+    </span>
+  );
+}
 
 function Index() {
   return (
@@ -55,7 +84,7 @@ function Index() {
             className={`group flex animate-pop flex-col items-center gap-3 rounded-3xl border-2 border-transparent bg-card/80 p-6 text-center shadow-lg backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:scale-95 ${RING[it.brand]}`}
           >
             <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
-              <Logo brand={it.brand} className="size-20" />
+              <LocalLogo brand={it.brand} imgUrl={it.imgUrl} />
             </span>
             <span className="text-lg font-bold text-foreground">{it.label}</span>
             <span className="text-xs text-muted-foreground">{it.hint}</span>
