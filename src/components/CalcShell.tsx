@@ -1,16 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Candy, Check, Receipt, Save, Skull } from "lucide-react";
+import { ArrowLeft, Candy, Check, Receipt, Save, Skull, Wallet } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
 
-export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
+export type Brand = "shopee" | "enjoei" | "doces" | "vendas" | "gastos";
 export const BRAND_BG: Record<Brand, string> = {
   shopee: "bg-gradient-to-br from-[var(--shopee)] to-[var(--shopee-2)]",
   enjoei: "bg-gradient-to-br from-[var(--enjoei)] to-[var(--enjoei-2)]",
   doces: "bg-gradient-to-br from-[var(--doces)] to-[var(--doces-2)]",
   vendas: "bg-gradient-to-br from-[var(--vendas)] to-[var(--vendas-2)]",
+  gastos: "bg-gradient-to-br from-[var(--gastos)] to-[var(--gastos-2)]",
 };
 
 export function Logo({ brand, className = "size-14" }: { brand: Brand; className?: string }) {
@@ -29,7 +30,7 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
         <img src="/enjoeilogo.png" alt="Enjoei" className="size-full object-cover" />
       </span>
     );
-  const Icon = brand === "doces" ? Candy : Receipt;
+  const Icon = brand === "doces" ? Candy : brand === "gastos" ? Wallet : Receipt;
   return (
     <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
       <Icon className="size-1/2" />

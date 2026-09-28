@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DocesRouteImport } from './routes/doces'
 import { Route as EnjoeiRouteImport } from './routes/enjoei'
+import { Route as GastosRouteImport } from './routes/gastos'
 import { Route as ShopeeRouteImport } from './routes/shopee'
 import { Route as VendasRouteImport } from './routes/vendas'
 
@@ -36,6 +37,11 @@ const EnjoeiRoute = EnjoeiRouteImport.update({
   path: '/enjoei',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GastosRoute = GastosRouteImport.update({
+  id: '/gastos',
+  path: '/gastos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopeeRoute = ShopeeRouteImport.update({
   id: '/shopee',
   path: '/shopee',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
+  '/gastos': typeof GastosRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
+  '/gastos': typeof GastosRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
@@ -69,15 +77,25 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
+  '/gastos': typeof GastosRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
+  fullPaths:
+    '/' | '/auth' | '/doces' | '/enjoei' | '/gastos' | '/shopee' | '/vendas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
-  id: '__root__' | '/' | '/auth' | '/doces' | '/enjoei' | '/shopee' | '/vendas'
+  to: '/' | '/auth' | '/doces' | '/enjoei' | '/gastos' | '/shopee' | '/vendas'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/doces'
+    | '/enjoei'
+    | '/gastos'
+    | '/shopee'
+    | '/vendas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -85,6 +103,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DocesRoute: typeof DocesRoute
   EnjoeiRoute: typeof EnjoeiRoute
+  GastosRoute: typeof GastosRoute
   ShopeeRoute: typeof ShopeeRoute
   VendasRoute: typeof VendasRoute
 }
@@ -119,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnjoeiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gastos': {
+      id: '/gastos'
+      path: '/gastos'
+      fullPath: '/gastos'
+      preLoaderRoute: typeof GastosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shopee': {
       id: '/shopee'
       path: '/shopee'
@@ -141,6 +167,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DocesRoute: DocesRoute,
   EnjoeiRoute: EnjoeiRoute,
+  GastosRoute: GastosRoute,
   ShopeeRoute: ShopeeRoute,
   VendasRoute: VendasRoute,
 }

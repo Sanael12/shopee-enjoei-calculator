@@ -18,11 +18,12 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string }[] = [
+const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas" | "/gastos"; brand: Brand; label: string; hint: string }[] = [
   { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa" },
   { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado" },
   { to: "/doces", brand: "doces", label: "Doces", hint: "Custo de produção" },
   { to: "/vendas", brand: "vendas", label: "Vendas", hint: "Tudo que você salvou" },
+  { to: "/gastos", brand: "gastos", label: "Gastos", hint: "Controle seus gastos" },
 ];
 
 const RING: Record<Brand, string> = {
@@ -30,6 +31,7 @@ const RING: Record<Brand, string> = {
   enjoei: "hover:border-[var(--enjoei)]",
   doces: "hover:border-[var(--doces)]",
   vendas: "hover:border-[var(--vendas)]",
+  gastos: "hover:border-[var(--gastos)]",
 };
 
 function Index() {
@@ -46,7 +48,7 @@ function Index() {
         Escolha onde você está vendendo
       </p>
 
-      <div className="relative mt-10 grid w-full max-w-3xl grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="relative mt-10 grid w-full max-w-3xl grid-cols-2 gap-4 md:grid-cols-5">
         {ITEMS.map((it, i) => (
           <Link
             key={it.to}

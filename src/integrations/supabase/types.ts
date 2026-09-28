@@ -62,6 +62,42 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          qty: number
+          amount: number
+          is_negative: boolean
+          date: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name?: string
+          qty?: number
+          amount: number
+          is_negative?: boolean
+          date: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          qty?: number
+          amount?: number
+          is_negative?: boolean
+          date?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
