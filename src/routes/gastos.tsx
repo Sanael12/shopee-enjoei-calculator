@@ -392,14 +392,19 @@ function ListExpensesView({ onBack }: { onBack: () => void }) {
         </button>
         <div className="flex items-center gap-2 text-sm">
           {signedIn ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-white/20 bg-white text-slate-900"
-              onClick={() => void supabase.auth.signOut()}
-            >
-              Sair
-            </Button>
+            <span className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="border-white/20 bg-white text-slate-900">
+                <Link to="/perfil">Meu perfil</Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-white/20 bg-white text-slate-900"
+                onClick={() => void supabase.auth.signOut()}
+              >
+                Sair
+              </Button>
+            </span>
           ) : (
             <Button asChild variant="outline" size="sm">
               <Link to="/auth">Entrar ou criar conta</Link>

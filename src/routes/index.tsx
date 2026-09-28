@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { UserRound } from "lucide-react";
 import { Logo, type Brand } from "@/components/CalcShell";
 
 export const Route = createFileRoute("/")({
@@ -64,6 +65,12 @@ function Index() {
           </Link>
         ))}
       </div>
+      <Link
+        to="/perfil"
+        className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-card/80 px-4 py-2 text-sm font-medium text-foreground shadow-md backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg"
+      >
+        <UserRound className="size-4" /> Minha conta
+      </Link>
     </div>
   );
 }

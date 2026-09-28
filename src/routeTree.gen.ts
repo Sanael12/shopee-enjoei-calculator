@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DocesRouteImport } from './routes/doces'
 import { Route as EnjoeiRouteImport } from './routes/enjoei'
 import { Route as GastosRouteImport } from './routes/gastos'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ShopeeRouteImport } from './routes/shopee'
 import { Route as VendasRouteImport } from './routes/vendas'
 
@@ -42,6 +43,11 @@ const GastosRoute = GastosRouteImport.update({
   path: '/gastos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopeeRoute = ShopeeRouteImport.update({
   id: '/shopee',
   path: '/shopee',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/gastos': typeof GastosRoute
+  '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/gastos': typeof GastosRoute
+  '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
@@ -78,15 +86,31 @@ export interface FileRoutesById {
   '/doces': typeof DocesRoute
   '/enjoei': typeof EnjoeiRoute
   '/gastos': typeof GastosRoute
+  '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/doces' | '/enjoei' | '/gastos' | '/shopee' | '/vendas'
+    | '/'
+    | '/auth'
+    | '/doces'
+    | '/enjoei'
+    | '/gastos'
+    | '/perfil'
+    | '/shopee'
+    | '/vendas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/doces' | '/enjoei' | '/gastos' | '/shopee' | '/vendas'
+  to:
+    | '/'
+    | '/auth'
+    | '/doces'
+    | '/enjoei'
+    | '/gastos'
+    | '/perfil'
+    | '/shopee'
+    | '/vendas'
   id:
     | '__root__'
     | '/'
@@ -94,6 +118,7 @@ export interface FileRouteTypes {
     | '/doces'
     | '/enjoei'
     | '/gastos'
+    | '/perfil'
     | '/shopee'
     | '/vendas'
   fileRoutesById: FileRoutesById
@@ -104,6 +129,7 @@ export interface RootRouteChildren {
   DocesRoute: typeof DocesRoute
   EnjoeiRoute: typeof EnjoeiRoute
   GastosRoute: typeof GastosRoute
+  PerfilRoute: typeof PerfilRoute
   ShopeeRoute: typeof ShopeeRoute
   VendasRoute: typeof VendasRoute
 }
@@ -145,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GastosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shopee': {
       id: '/shopee'
       path: '/shopee'
@@ -168,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocesRoute: DocesRoute,
   EnjoeiRoute: EnjoeiRoute,
   GastosRoute: GastosRoute,
+  PerfilRoute: PerfilRoute,
   ShopeeRoute: ShopeeRoute,
   VendasRoute: VendasRoute,
 }
