@@ -134,7 +134,7 @@ function VendasPage() {
         </div>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-[var(--shopee-foreground)]">
           <span>{signedIn ? "Vendas guardadas na sua conta" : "Entre na sua conta para guardar as vendas permanentemente."}</span>
-          {signedIn ? <Button variant="outline" size="sm" onClick={() => void supabase.auth.signOut()}>Sair</Button> : <Button asChild variant="outline" size="sm"><Link to="/auth">Entrar ou criar conta</Link></Button>}
+          {signedIn ? <Button variant="outline" size="sm" className="text-slate-900 border-white/20 bg-white" onClick={() => void supabase.auth.signOut()}>Sair</Button> : <Button asChild variant="outline" size="sm"><Link to="/auth">Entrar ou criar conta</Link></Button>}
         </div>
         {error ? <div role="alert" className="mt-3 text-sm text-[var(--shopee-foreground)]">{error} <Button variant="link" onClick={() => void refresh()}>Tentar novamente</Button></div> : null}
 
