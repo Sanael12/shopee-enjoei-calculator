@@ -19,7 +19,7 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
     return (
       <span className={`${base} block`}>
         {/* CORREÇÃO: Buscando a imagem diretamente da pasta public */}
-        <img src="/shopeelogo.png" alt="Shopee" className="size-full object-cover" />
+        <img src="/shopeelogo.png" alt="Shopee" className="size-12 object-cover" />
       </span>
     );
   if (brand === "enjoei")
@@ -32,7 +32,7 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   const Icon = brand === "doces" ? Candy : Receipt;
   return (
     <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
-      <Icon className="size-1/3" />
+      <Icon className="size-1/2" />
     </span>
   );
 }
