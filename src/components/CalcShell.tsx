@@ -20,7 +20,7 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   if (brand === "shopee")
     return (
       <span className={`${base} block`}>
-        <img src={shopeeLogo.png} alt="Shopee" className="size-full object-cover" />
+        <img src={shopeeLogo.jpg} alt="Shopee" className="size-full object-cover" />
       </span>
     );
   if (brand === "enjoei")
