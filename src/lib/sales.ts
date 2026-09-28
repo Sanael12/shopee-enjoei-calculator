@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Platform = "shopee" | "enjoei" | "doces";
@@ -35,6 +35,7 @@ function toSale(row: Tables<"sales">): Sale {
 }
 
 async function importLocal(userId: string) {
+  if (!supabase) return;
   const pending = loadLocal();
   if (!pending.length) return;
   // Stable IDs make retries safe if a network response is lost after a successful write.
@@ -52,8 +53,10 @@ async function importLocal(userId: string) {
 
 export async function addSale(s: Omit<Sale, "id">): Promise<"saved" | "needsAuth"> {
   const sale = { ...s, id: crypto.randomUUID() };
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) {
+  const { data: { user }, error: authError } = supabase
+    ? await supabase.auth.getUser()
+    : { data: { user: null }, error: null };
+  if (!supabase || authError || !user) {
     localStorage.setItem(KEY, JSON.stringify([sale, ...loadLocal()]));
     return "needsAuth";
   }
@@ -79,9 +82,11 @@ export function useSales() {
     setLoading(true);
     setError("");
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = supabase
+        ? await supabase.auth.getUser()
+        : { data: { user: null } };
       setSignedIn(Boolean(user));
-      if (!user) {
+      if (!supabase || !user) {
         setSales(loadLocal());
         return;
       }
@@ -97,6 +102,7 @@ export function useSales() {
   };
   useEffect(() => {
     void refresh();
+    if (!supabase) return;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" || event === "SIGNED_OUT") setTimeout(() => void refresh(), 0);
     });
@@ -105,8 +111,10 @@ export function useSales() {
   const update = async (id: string, patch: Partial<Sale>) => {
     setError("");
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { user } } = supabase
+        ? await supabase.auth.getUser()
+        : { data: { user: null } };
+      if (!supabase || !user) {
         localStorage.setItem(KEY, JSON.stringify(loadLocal().map(s => s.id === id ? { ...s, ...patch } : s)));
       } else {
         const changes: { name?: string; date?: string } = {};
@@ -121,8 +129,10 @@ export function useSales() {
   const remove = async (id: string) => {
     setError("");
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) localStorage.setItem(KEY, JSON.stringify(loadLocal().filter(s => s.id !== id)));
+      const { data: { user } } = supabase
+        ? await supabase.auth.getUser()
+        : { data: { user: null } };
+      if (!supabase || !user) localStorage.setItem(KEY, JSON.stringify(loadLocal().filter(s => s.id !== id)));
       else {
         const { error: e } = await supabase.from("sales").delete().eq("id", id).eq("user_id", user.id);
         if (e) throw e;
@@ -133,8 +143,10 @@ export function useSales() {
   const clear = async () => {
     setError("");
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) localStorage.removeItem(KEY);
+      const { data: { user } } = supabase
+        ? await supabase.auth.getUser()
+        : { data: { user: null } };
+      if (!supabase || !user) localStorage.removeItem(KEY);
       else {
         const { error: e } = await supabase.from("sales").delete().eq("user_id", user.id);
         if (e) throw e;

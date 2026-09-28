@@ -2,8 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/lib/supabase";
 import { BRAND_BG, Logo } from "@/components/CalcShell";
 
 export const Route = createFileRoute("/auth")({
@@ -26,10 +25,16 @@ function AuthPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   useEffect(() => {
+    if (!supabase) return;
     void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: "/vendas" }); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") void navigate({ to: "/vendas" });
+    });
+    return () => subscription.unsubscribe();
   }, [navigate]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!supabase) { setError("Configure a conexão com o banco de dados para entrar."); return; }
     setBusy(true); setError(""); setMessage("");
     try {
       if (register) {
@@ -46,11 +51,14 @@ function AuthPage() {
     finally { setBusy(false); }
   };
   const signInGoogle = async () => {
+    if (!supabase) { setError("Configure a conexão com o banco de dados para entrar."); return; }
     setBusy(true); setError("");
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth` });
-      if (result.error) throw result.error;
-      if (!result.redirected) void navigate({ to: "/vendas" });
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth` },
+      });
+      if (oauthError) throw oauthError;
     } catch { setError("Não foi possível entrar com Google. Tente novamente."); }
     finally { setBusy(false); }
   };
@@ -60,6 +68,7 @@ function AuthPage() {
       <div className="mt-8 flex items-center gap-3 text-[var(--shopee-foreground)]"><Logo brand="vendas" /><h1 className="text-3xl font-bold">{register ? "Criar conta" : "Entrar"}</h1></div>
       <div className="mt-6 space-y-5 rounded-2xl bg-card p-6 text-card-foreground shadow-xl">
         <p className="text-sm text-muted-foreground">Suas vendas ficam guardadas na sua conta e podem ser acessadas novamente ao entrar.</p>
+        {!supabase && <p role="alert" className="text-sm text-destructive">Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para conectar sua conta.</p>}
         <Button type="button" variant="outline" className="w-full" disabled={busy} onClick={() => void signInGoogle()}>Continuar com Google</Button>
         <div className="text-center text-xs text-muted-foreground">Ou use seu e-mail</div>
         <form onSubmit={(e) => void submit(e)} className="space-y-3">

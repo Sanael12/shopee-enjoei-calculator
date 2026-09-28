@@ -12,3 +12,5 @@
 - [x] Criar armazenamento permanente protegido por conta
 - [x] Importar vendas guardadas neste navegador ao entrar
 - [x] Verificar persistência local ao recarregar e fluxo de acesso no navegador
+- [x] Substituir autenticação antiga e conectar apenas com VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY
+- [x] Conferir que vendas locais não se perdem sem configuração e documentar a migração externa
