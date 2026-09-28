@@ -13,7 +13,7 @@ export const BRAND_BG: Record<Brand, string> = {
   vendas: "bg-gradient-to-br from-[var(--vendas)] to-[var(--vendas-2)]",
 };
 
-export function Logo({ brand, className = "size-12" }: { brand: Brand; className?: string }) {
+export function Logo({ brand, className = "size-14" }: { brand: Brand; className?: string }) {
   const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
   if (brand === "shopee")
     return (
@@ -32,7 +32,7 @@ export function Logo({ brand, className = "size-12" }: { brand: Brand; className
   const Icon = brand === "doces" ? Candy : Receipt;
   return (
     <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
-      <Icon className="size-1/2" />
+      <Icon className="size-1/3" />
     </span>
   );
 }
