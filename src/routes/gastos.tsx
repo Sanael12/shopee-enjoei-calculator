@@ -5,7 +5,7 @@ import { BRAND_BG, Logo } from "@/components/CalcShell";
 import { brl, parseMoney } from "@/lib/calc";
 import { addExpense, formatDate, today, useExpenses, type Expense } from "@/lib/expenses";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/gastos")({
   head: () => ({

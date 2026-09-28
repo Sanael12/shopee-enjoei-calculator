@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -12,6 +13,7 @@ export type Expense = {
 };
 
 const KEY = "calc-gastos";
+const METADATA_KEY = "calc_expenses";
 
 export const today = () => {
   const now = new Date();
@@ -21,24 +23,40 @@ export const today = () => {
 function loadLocal(): Expense[] {
   try {
     const value: unknown = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(value)
-      ? value.filter(
-          (e): e is Expense =>
-            Boolean(
-              e &&
-                typeof e === "object" &&
-                typeof e.id === "string" &&
-                typeof e.name === "string" &&
-                typeof e.qty === "number" &&
-                typeof e.amount === "number" &&
-                typeof e.is_negative === "boolean" &&
-                typeof e.date === "string",
-            ),
-        )
-      : [];
+    return Array.isArray(value) ? value.filter(isExpense) : [];
   } catch {
     return [];
   }
+}
+
+function isExpense(value: unknown): value is Expense {
+  if (!value || typeof value !== "object") return false;
+  const e = value as Partial<Expense>;
+  return (
+    typeof e.id === "string" &&
+    typeof e.name === "string" &&
+    typeof e.qty === "number" &&
+    typeof e.amount === "number" &&
+    typeof e.is_negative === "boolean" &&
+    typeof e.date === "string"
+  );
+}
+
+function loadMetadata(user: User): Expense[] {
+  const value: unknown = user.user_metadata?.[METADATA_KEY];
+  return Array.isArray(value) ? value.filter(isExpense) : [];
+}
+
+function isMissingExpensesTable(error: { code?: string } | null | undefined) {
+  return error?.code === "PGRST205" || error?.code === "42P01";
+}
+
+async function saveMetadata(user: User, expenses: Expense[]) {
+  if (!supabase) throw new Error("Supabase is not configured");
+  const { error } = await supabase.auth.updateUser({
+    data: { [METADATA_KEY]: expenses },
+  });
+  if (error) throw error;
 }
 
 function toExpense(row: Tables<"expenses">): Expense {
@@ -52,15 +70,16 @@ function toExpense(row: Tables<"expenses">): Expense {
   };
 }
 
-async function importLocal(userId: string) {
+async function importPending(user: User) {
   if (!supabase) return;
-  const pending = loadLocal();
+  const pending = [...loadLocal(), ...loadMetadata(user)];
   if (!pending.length) return;
-  for (const exp of pending) {
+  const unique = [...new Map(pending.map((exp) => [exp.id, exp])).values()];
+  for (const exp of unique) {
     const { error } = await supabase.from("expenses").upsert(
       {
         id: exp.id,
-        user_id: userId,
+        user_id: user.id,
         name: exp.name,
         qty: exp.qty,
         amount: exp.amount,
@@ -70,11 +89,9 @@ async function importLocal(userId: string) {
       { onConflict: "id" },
     );
     if (error) throw error;
-    localStorage.setItem(
-      KEY,
-      JSON.stringify(loadLocal().filter((item) => item.id !== exp.id)),
-    );
   }
+  localStorage.removeItem(KEY);
+  await saveMetadata(user, []);
 }
 
 export async function addExpense(
@@ -97,7 +114,13 @@ export async function addExpense(
     is_negative: expense.is_negative,
     date: expense.date.slice(0, 10),
   });
-  if (error) throw error;
+  if (error) {
+    if (isMissingExpensesTable(error)) {
+      await saveMetadata(user, [expense, ...loadMetadata(user)]);
+      return "saved";
+    }
+    throw error;
+  }
   return "saved";
 }
 
@@ -123,7 +146,18 @@ export function useExpenses() {
         setExpenses(loadLocal());
         return;
       }
-      await importLocal(user.id);
+      const firstRead = await supabase
+        .from("expenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false })
+        .order("created_at", { ascending: false });
+      if (firstRead.error && isMissingExpensesTable(firstRead.error)) {
+        setExpenses([...loadMetadata(user), ...loadLocal()]);
+        return;
+      }
+      if (firstRead.error) throw firstRead.error;
+      await importPending(user);
       const { data, error: readError } = await supabase
         .from("expenses")
         .select("*")
@@ -172,7 +206,15 @@ export function useExpenses() {
           .update(changes)
           .eq("id", id)
           .eq("user_id", user.id);
-        if (e) throw e;
+        if (e) {
+          if (isMissingExpensesTable(e)) {
+            await saveMetadata(user, loadMetadata(user).map((expense) => (
+              expense.id === id ? { ...expense, ...patch } : expense
+            )));
+          } else {
+            throw e;
+          }
+        }
       }
       await refresh();
     } catch {
@@ -194,7 +236,13 @@ export function useExpenses() {
           .delete()
           .eq("id", id)
           .eq("user_id", user.id);
-        if (e) throw e;
+        if (e) {
+          if (isMissingExpensesTable(e)) {
+            await saveMetadata(user, loadMetadata(user).filter((expense) => expense.id !== id));
+          } else {
+            throw e;
+          }
+        }
       }
       await refresh();
     } catch {
@@ -214,7 +262,13 @@ export function useExpenses() {
           .from("expenses")
           .delete()
           .eq("user_id", user.id);
-        if (e) throw e;
+        if (e) {
+          if (isMissingExpensesTable(e)) {
+            await saveMetadata(user, []);
+          } else {
+            throw e;
+          }
+        }
       }
       await refresh();
     } catch {
