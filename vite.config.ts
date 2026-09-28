@@ -8,6 +8,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   vite: {
+    server: {
+      allowedHosts: true,
+    },
     // Public browser configuration for the user's external Supabase project.
     // Override the preview's injected VITE_* values from its old managed project.
     define: {
