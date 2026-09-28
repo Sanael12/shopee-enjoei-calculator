@@ -47,8 +47,12 @@ function loadMetadata(user: User): Expense[] {
   return Array.isArray(value) ? value.filter(isExpense) : [];
 }
 
-function isMissingExpensesTable(error: { code?: string } | null | undefined) {
-  return error?.code === "PGRST205" || error?.code === "42P01";
+function isMissingExpensesTable(error: { code?: string; message?: string } | null | undefined) {
+  return (
+    error?.code === "PGRST205" ||
+    error?.code === "42P01" ||
+    Boolean(error?.message?.includes("schema cache"))
+  );
 }
 
 async function saveMetadata(user: User, expenses: Expense[]) {
@@ -228,23 +232,23 @@ export function useExpenses() {
       const { data: { user } } = supabase
         ? await supabase.auth.getUser()
         : { data: { user: null } };
-      if (!supabase || !user)
-        localStorage.setItem(KEY, JSON.stringify(loadLocal().filter((e) => e.id !== id)));
-      else {
+      // A signed-in list can merge rows, account metadata and browser-only
+      // expenses, so the id must be removed from every source it may live in.
+      localStorage.setItem(KEY, JSON.stringify(loadLocal().filter((e) => e.id !== id)));
+      if (supabase && user) {
         const { error: e } = await supabase
           .from("expenses")
           .delete()
           .eq("id", id)
           .eq("user_id", user.id);
-        if (e) {
-          if (isMissingExpensesTable(e)) {
-            await saveMetadata(user, loadMetadata(user).filter((expense) => expense.id !== id));
-          } else {
-            throw e;
-          }
+        if (e && !isMissingExpensesTable(e)) throw e;
+        const metadata = loadMetadata(user);
+        if (metadata.some((expense) => expense.id === id)) {
+          await saveMetadata(user, metadata.filter((expense) => expense.id !== id));
         }
       }
-      await refresh();
+      setExpenses((list) => list.filter((expense) => expense.id !== id));
+      void refresh();
     } catch {
       setError("Não foi possível apagar o gasto.");
     }

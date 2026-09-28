@@ -17,6 +17,9 @@ import { Route as GastosRouteImport } from './routes/gastos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ShopeeRouteImport } from './routes/shopee'
 import { Route as VendasRouteImport } from './routes/vendas'
+import { Route as AvaliacaoIndexRouteImport } from './routes/avaliacao.index'
+import { Route as AvaliacaoNovaRouteImport } from './routes/avaliacao.nova'
+import { Route as AvaliacaoResultadosRouteImport } from './routes/avaliacao.resultados'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +61,21 @@ const VendasRoute = VendasRouteImport.update({
   path: '/vendas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AvaliacaoIndexRoute = AvaliacaoIndexRouteImport.update({
+  id: '/avaliacao/',
+  path: '/avaliacao/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvaliacaoNovaRoute = AvaliacaoNovaRouteImport.update({
+  id: '/avaliacao/nova',
+  path: '/avaliacao/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvaliacaoResultadosRoute = AvaliacaoResultadosRouteImport.update({
+  id: '/avaliacao/resultados',
+  path: '/avaliacao/resultados',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +86,9 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
+  '/avaliacao/nova': typeof AvaliacaoNovaRoute
+  '/avaliacao/resultados': typeof AvaliacaoResultadosRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +99,9 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
+  '/avaliacao/nova': typeof AvaliacaoNovaRoute
+  '/avaliacao/resultados': typeof AvaliacaoResultadosRoute
+  '/avaliacao': typeof AvaliacaoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +113,9 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/shopee': typeof ShopeeRoute
   '/vendas': typeof VendasRoute
+  '/avaliacao/nova': typeof AvaliacaoNovaRoute
+  '/avaliacao/resultados': typeof AvaliacaoResultadosRoute
+  '/avaliacao/': typeof AvaliacaoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +128,9 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/shopee'
     | '/vendas'
+    | '/avaliacao/nova'
+    | '/avaliacao/resultados'
+    | '/avaliacao/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +141,9 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/shopee'
     | '/vendas'
+    | '/avaliacao/nova'
+    | '/avaliacao/resultados'
+    | '/avaliacao'
   id:
     | '__root__'
     | '/'
@@ -121,6 +154,9 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/shopee'
     | '/vendas'
+    | '/avaliacao/nova'
+    | '/avaliacao/resultados'
+    | '/avaliacao/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +168,9 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRoute
   ShopeeRoute: typeof ShopeeRoute
   VendasRoute: typeof VendasRoute
+  AvaliacaoNovaRoute: typeof AvaliacaoNovaRoute
+  AvaliacaoResultadosRoute: typeof AvaliacaoResultadosRoute
+  AvaliacaoIndexRoute: typeof AvaliacaoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +231,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/avaliacao/': {
+      id: '/avaliacao/'
+      path: '/avaliacao'
+      fullPath: '/avaliacao/'
+      preLoaderRoute: typeof AvaliacaoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avaliacao/nova': {
+      id: '/avaliacao/nova'
+      path: '/avaliacao/nova'
+      fullPath: '/avaliacao/nova'
+      preLoaderRoute: typeof AvaliacaoNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avaliacao/resultados': {
+      id: '/avaliacao/resultados'
+      path: '/avaliacao/resultados'
+      fullPath: '/avaliacao/resultados'
+      preLoaderRoute: typeof AvaliacaoResultadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +264,9 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRoute,
   ShopeeRoute: ShopeeRoute,
   VendasRoute: VendasRoute,
+  AvaliacaoNovaRoute: AvaliacaoNovaRoute,
+  AvaliacaoResultadosRoute: AvaliacaoResultadosRoute,
+  AvaliacaoIndexRoute: AvaliacaoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

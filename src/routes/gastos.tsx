@@ -400,7 +400,7 @@ function ListExpensesView({ onBack }: { onBack: () => void }) {
                 variant="outline"
                 size="sm"
                 className="border-white/20 bg-white text-slate-900"
-                onClick={() => void supabase.auth.signOut()}
+                onClick={() => void supabase?.auth.signOut()}
               >
                 Sair
               </Button>
