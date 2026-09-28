@@ -60,7 +60,7 @@ function Index() {
               {/* IMAGEM PNG DA SHOPEE SALVA NA PASTA PUBLIC */}
               {it.brand === "shopee" && (
                 <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-3">
-                  <img src="/shopee.png" alt="Shopee" className="w-full h-full object-contain" />
+                  <img src="/https://storage.googleapis.com/gpt-engineer-file-uploads/76366028-6cef-45ed-9c3d-33920d35bc0c/abda4562-7930-41a2-bab0-e69e942038f9?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=go-api%40lovable-core-prod.iam.gserviceaccount.com%2F20260928%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260928T015952Z&X-Goog-Expires=3599&X-Goog-Signature=aa84f092aded07e6fb824f2b97748df786a919ac87cb9653df72241a47750d807d2b660ae3451880606929f805902a499fd3100ad1a8a5a5b86ba62956c8a6a82b2e3958236002451ae1f1559acda88876e0c80a5d65958e4eed7af5eb714d570a93b3c7b33cd98c2626daa304731be9c5e6adda1dd15dad8f50fa1a488d3f76340937fc001f35f4aae474a9474db8992159c5aff9faacdfa54d2ba40ba397a164a61b0d6b498589394224c29bfd30b27dd424d8c005e02eae41eda37986177f18daac546affac88c4d5d600899125de953d47f5aa7281e3f61e839c50fe846f591a493b438dce7cef8e6e763ce10d28ebea0235deb99ef5b84381435d6a83db&X-Goog-SignedHeaders=host" alt="Shopee" className="w-full h-full object-contain" />
                 </span>
               )}
 
