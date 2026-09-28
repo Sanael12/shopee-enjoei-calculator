@@ -20,13 +20,13 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   if (brand === "shopee")
     return (
       <span className={`${base} block`}>
-        <img src={shopeeLogo.url} alt="Shopee" className="size-full object-cover" />
+        <img src={<img src="https://r2.dev" alt="Shopee" className="size-full object-cover" />
       </span>
     );
   if (brand === "enjoei")
     return (
       <span className={`${base} block`}>
-        <img src={enjoeiLogo.url} alt="Enjoei" className="size-full object-cover" />
+       <img src="https://r2.dev" alt="Enjoei" className="size-full object-cover" />
       </span>
     );
   const Icon = brand === "doces" ? Candy : Receipt;
