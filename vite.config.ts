@@ -7,6 +7,14 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    // Public browser configuration for the user's external Supabase project.
+    // Override the preview's injected VITE_* values from its old managed project.
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify("https://faebrmezzvtnbwrappct.supabase.co"),
+      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify("sb_publishable_W3KIlncj0x6MbLUxQalU7g_WDLfueig"),
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
