@@ -57,7 +57,7 @@ function Index() {
           >
             <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
               
-              {/* LOGO OFICIAL DA SHOPEE EM VETOR PURA (NUNCA QUEBRA) */}
+              {/* LOGO OFICIAL DA SHOPEE EM VETOR PURA (CORRIGIDA) */}
               {it.brand === "shopee" && (
                 <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-3.5">
                   <svg viewBox="0 0 24 24" className="w-full h-full fill-white" xmlns="http://w3.org">
@@ -66,7 +66,7 @@ function Index() {
                 </span>
               )}
 
-              {/* LOGO OFICIAL DO ENJOEI EM VETOR PURA (NUNCA QUEBRA) */}
+              {/* LOGO OFICIAL DO ENJOEI EM VETOR PURA (CORRIGIDA) */}
               {it.brand === "enjoei" && (
                 <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#2E0025] flex items-center justify-center p-3">
                   <svg viewBox="0 0 100 100" className="w-full h-full fill-white" xmlns="http://w3.org">
