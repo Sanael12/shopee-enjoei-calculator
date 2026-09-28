@@ -20,18 +20,18 @@ export const Route = createFileRoute("/")({
 
 type Brand = "shopee" | "enjoei" | "doces" | "vendas";
 
-const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string }[] = [
-  { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa" },
-  { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado" },
+const ITEMS: { to: "/shopee" | "/enjoei" | "/doces" | "/vendas"; brand: Brand; label: string; hint: string; imgUrl?: string }[] = [
+  { to: "/shopee", brand: "shopee", label: "Shopee", hint: "Comissão por faixa", imgUrl: "https://g.co" },
+  { to: "/enjoei", brand: "enjoei", label: "Enjoei", hint: "Grátis, clássico ou turbinado", imgUrl: "https://g.co" },
   { to: "/doces", brand: "doces", label: "Doces", hint: "Custo de produção" },
   { to: "/vendas", brand: "vendas", label: "Vendas", hint: "Tudo que você salvou" },
 ];
 
 const RING: Record<Brand, string> = {
   shopee: "hover:border-[#EE4D2D]",
-  enjoei: "hover:border-[#F05B78]",
+  enjoei: "hover:border-[#2E0025]",
   doces: "hover:border-[#F05B78]",
-  vendas: "hover:border-[#0F172A]",
+  vendas: "hover:border-[#042F1A]",
 };
 
 function Index() {
@@ -57,34 +57,30 @@ function Index() {
           >
             <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
               
-              {/* ÍCONE DA SHOPEE IDÊNTICO AO APLICATIVO OFICIAL */}
+              {/* CARTÃO DA SHOPEE PERFEITO */}
               {it.brand === "shopee" && (
-                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-3">
-                  <svg viewBox="0 0 24 24" className="w-full h-full fill-white">
-                    <path d="M19 6.5h-3c0-2.5-1.8-4.5-4-4.5s-4 2-4 4.5H5c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-11c0-1.1-.9-2-2-2zm-7-4c1.1 0 2 1.3 2 3H10c0-1.7.9-3 2-3zm2.5 11.3c-.3.5-.8.9-1.5 1.1v.6c0 .3-.2.5-.5.5h-.5c-.3 0-.5-.2-.5-.5v-.5c-.9-.1-1.6-.6-1.9-1.3-.1-.3 0-.6.3-.7l.5-.3c.2-.1.5 0 .6.2.2.4.6.7 1.1.7.6 0 1-.3 1-.7 0-.3-.2-.5-.8-.7l-1-.3c-1-.3-1.5-.9-1.5-1.7 0-.7.5-1.3 1.3-1.6v-.4c0-.3.2-.5.5-.5h.5c\$.3 0 .5.2.5.5v.4c.7.1 1.3.5 1.6 1.1.1.3 0 .6-.3.7l-.4.3c-.2.1-.5 0-.6-.2-.2-.3-.5-.5-.9-.5-.5 0-.8.2-.8.5 0 .3.2.4.7.6l1 .3c1 .3 1.5.9 1.5 1.7 0 .5-.2.9-.5 1.2z" />
-                  </svg>
+                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#EE4D2D] flex items-center justify-center p-0.5">
+                  <img src="https://vecteezy.com" alt="Shopee" className="w-full h-full object-contain" />
                 </span>
               )}
 
-              {/* ÍCONE DO ENJOEI IDÊNTICO AO APLICATIVO OFICIAL */}
+              {/* CARTÃO DO ENJOEI PERFEITO */}
               {it.brand === "enjoei" && (
-                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#2E0025] flex items-center justify-center p-3">
-                  <svg viewBox="0 0 24 24" className="w-full h-full fill-white">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm0 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-4-6h8c0 2.21-1.79 4-4 4s-4-1.79-4-4z" />
-                  </svg>
+                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#2E0025] flex items-center justify-center p-0.5">
+                  <img src="https://enjoei.com.br" alt="Enjoei" className="w-full h-full object-contain" />
                 </span>
               )}
 
-              {/* ÍCONE DE DOCES ATUALIZADO PARA ROSA */}
+              {/* CARTÃO DE DOCES EM ROSA */}
               {it.brand === "doces" && (
                 <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-[#F05B78] to-[#D03B58] flex items-center justify-center text-white">
                   <Candy className="size-1/2" />
                 </span>
               )}
 
-              {/* ÍCONE DE VENDAS ATUALIZADO PARA VERDE ESCURO */}
+              {/* CARTÃO DE VENDAS EM VERDE ESCURO */}
               {it.brand === "vendas" && (
-                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-[#0F172A] flex items-center justify-center text-white">
+                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-[#042F1A] to-[#0B4F2C] flex items-center justify-center text-white">
                   <Receipt className="size-1/2" />
                 </span>
               )}
