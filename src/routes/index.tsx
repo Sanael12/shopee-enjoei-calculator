@@ -41,26 +41,6 @@ const BRAND_BG: Record<Brand, string> = {
   vendas: "bg-gradient-to-br from-[var(--vendas)] to-[var(--vendas-2)]",
 };
 
-function LocalLogo({ brand, imgUrl }: { brand: Brand; imgUrl?: string }) {
-  const base = "size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-white flex items-center justify-center p-2.5";
-  
-  if (imgUrl) {
-    return (
-      <span className={base}>
-        <img src={imgUrl} alt={brand} className="w-full h-full object-contain" />
-      </span>
-    );
-  }
-
-  const Icon = brand === "doces" ? Candy : Receipt;
-  const standardBase = "size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg";
-  return (
-    <span className={`${standardBase} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
-      <Icon className="size-1/2" />
-    </span>
-  );
-}
-
 function Index() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[var(--home-1)] via-[var(--home-2)] to-[var(--home-3)] px-4 py-12">
@@ -84,7 +64,15 @@ function Index() {
             className={`group flex animate-pop flex-col items-center gap-3 rounded-3xl border-2 border-transparent bg-card/80 p-6 text-center shadow-lg backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl active:scale-95 ${RING[it.brand]}`}
           >
             <span className="animate-float transition-transform group-hover:scale-110" style={{ animationDelay: `-${i * 0.7}s` }}>
-              <LocalLogo brand={it.brand} imgUrl={it.imgUrl} />
+              {it.imgUrl ? (
+                <span className="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg bg-white flex items-center justify-center p-2">
+                  <img src={it.imgUrl} alt={it.label} className="w-full h-full object-contain" />
+                </span>
+              ) : (
+                <span className={`size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg flex items-center justify-center ${BRAND_BG[it.brand]} text-[var(--shopee-foreground)]`}>
+                  {it.brand === "doces" ? <Candy className="size-1/2" /> : <Receipt className="size-1/2" />}
+                </span>
+              )}
             </span>
             <span className="text-lg font-bold text-foreground">{it.label}</span>
             <span className="text-xs text-muted-foreground">{it.hint}</span>
