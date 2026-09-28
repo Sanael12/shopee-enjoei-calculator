@@ -54,7 +54,8 @@ function AuthPage() {
     if (!supabase) { setError("Configure a conexão com o banco de dados para entrar."); return; }
     setBusy(true); setError("");
     try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth("google", {
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
         options: { redirectTo: `${window.location.origin}/auth` },
       });
       if (oauthError) throw oauthError;
