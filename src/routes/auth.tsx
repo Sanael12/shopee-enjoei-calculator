@@ -27,6 +27,10 @@ function AuthPage() {
   useEffect(() => {
     if (!supabase) return;
     void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: "/vendas" }); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") void navigate({ to: "/vendas" });
+    });
+    return () => subscription.unsubscribe();
   }, [navigate]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
