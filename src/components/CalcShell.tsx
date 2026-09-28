@@ -4,8 +4,10 @@ import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
-import shopeeLogo from "@/assets/shopee-logo-requested.png.asset.json";
-import enjoeiLogo from "@/assets/enjoei-logo.png.asset.json";
+
+// CORREÇÃO: Importando diretamente as imagens PNG a partir da mesma pasta
+import enjoeiLogo from "./enjoeilogo.png";
+import shopeeLogo from "./shopeelogo.png";
 
 export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
 export const BRAND_BG: Record<Brand, string> = {
@@ -20,13 +22,15 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   if (brand === "shopee")
     return (
       <span className={`${base} block`}>
-        <img src={shopeeLogo.png} alt="Shopee" className="size-full object-cover" />
+        {/* CORREÇÃO: Usando a variável do import diretamente no src */}
+        <img src={shopeeLogo} alt="Shopee" className="size-full object-cover" />
       </span>
     );
   if (brand === "enjoei")
     return (
       <span className={`${base} block`}>
-        <img src={enjoeiLogo.png} alt="Enjoei" className="size-full object-cover" />
+        {/* CORREÇÃO: Usando a variável do import diretamente no src */}
+        <img src={enjoeiLogo} alt="Enjoei" className="size-full object-cover" />
       </span>
     );
   const Icon = brand === "doces" ? Candy : Receipt;
@@ -85,7 +89,7 @@ export function MoneyField({
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium text-foreground">{label}</span>
       <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-3 shadow-sm transition-shadow focus-within:shadow-md focus-within:ring-2 focus-within:ring-ring">
-        <span className="text-sm text-muted-foreground">R$</span>
+        <span className="text-sm text-muted-foreground">R\$</span>
         <input
           inputMode="decimal"
           value={value}
@@ -205,12 +209,16 @@ export function ResultCard({
                 setSaving(false);
               }
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] active:scale-95"
+            className="flex w-full items-center justify-center gap-2"
           >
-            {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
-            {saving ? "Salvando..." : saved ? "Venda salva!" : "Salvar venda"}
+            {saved ? <Check className="size-4" /> : <Save className="size-4" />}
+            {saved ? "Salvo!" : saving ? "Salvando..." : "Salvar Venda"}
           </Button>
-          {saveMessage ? <p role="status" className="text-xs text-muted-foreground">{saveMessage} <Link to="/auth" className="font-semibold underline">Entrar</Link></p> : null}
+          {saveMessage ? (
+            <p className="animate-fade-in text-center text-xs text-muted-foreground text-balance">
+              {saveMessage}
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>
