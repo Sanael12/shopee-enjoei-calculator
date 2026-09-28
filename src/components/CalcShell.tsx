@@ -14,27 +14,28 @@ export const BRAND_BG: Record<Brand, string> = {
 };
 
 export function Logo({ brand, className = "size-14" }: { brand: Brand; className?: string }) {
-  const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
+  const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg bg-white flex items-center justify-center p-2`;
   
   if (brand === "shopee") {
     return (
-      <span className={`${base} block`}>
-        <img src="https://wikimedia.org" alt="Shopee" className="size-full object-cover" />
+      <span className={base}>
+        <img src="https://rawpixel.com" alt="Shopee" className="w-full h-full object-contain" />
       </span>
     );
   }
   
   if (brand === "enjoei") {
     return (
-      <span className={`${base} block`}>
-        <img src="https://wikimedia.org" alt="Enjoei" className="size-full object-cover" />
+      <span className={base}>
+        <img src="https://enjoei.com.br" alt="Enjoei" className="w-full h-full object-contain" />
       </span>
     );
   }
 
   const Icon = brand === "doces" ? Candy : Receipt;
+  const standardBase = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
   return (
-    <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
+    <span className={`${standardBase} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
       <Icon className="size-1/2" />
     </span>
   );
