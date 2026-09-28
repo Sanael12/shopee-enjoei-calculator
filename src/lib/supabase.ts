@@ -1,6 +1,3 @@
-O arquivo de inicialização é `src/lib/supabase.ts`. Este é o código completo atualizado:
-
-```ts
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -14,4 +11,3 @@ export const supabase = url && anonKey
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     })
   : null;
-```
