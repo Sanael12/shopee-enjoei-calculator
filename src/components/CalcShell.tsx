@@ -4,6 +4,8 @@ import { useState, type ReactNode } from "react";
 import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
+import shopeeLogo from "@/assets/shopee-logo-requested.png.asset.json";
+import enjoeiLogo from "@/assets/enjoei-logo.png.asset.json";
 
 export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
 export const BRAND_BG: Record<Brand, string> = {
@@ -14,28 +16,22 @@ export const BRAND_BG: Record<Brand, string> = {
 };
 
 export function Logo({ brand, className = "size-14" }: { brand: Brand; className?: string }) {
-  const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg bg-white flex items-center justify-center p-2`;
-  
-  if (brand === "shopee") {
+  const base = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
+  if (brand === "shopee")
     return (
-      <span className={base}>
-        <img src="https://rawpixel.com" alt="Shopee" className="w-full h-full object-contain" />
+      <span className={`${base} block`}>
+        <img src={shopeeLogo.url} alt="Shopee" className="size-full object-cover" />
       </span>
     );
-  }
-  
-  if (brand === "enjoei") {
+  if (brand === "enjoei")
     return (
-      <span className={base}>
-        <img src="https://enjoei.com.br" alt="Enjoei" className="w-full h-full object-contain" />
+      <span className={`${base} block`}>
+        <img src={enjoeiLogo.url} alt="Enjoei" className="size-full object-cover" />
       </span>
     );
-  }
-
   const Icon = brand === "doces" ? Candy : Receipt;
-  const standardBase = `${className} shrink-0 overflow-hidden rounded-2xl shadow-lg`;
   return (
-    <span className={`${standardBase} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
+    <span className={`${base} flex items-center justify-center ${BRAND_BG[brand]} text-[var(--shopee-foreground)]`}>
       <Icon className="size-1/2" />
     </span>
   );
@@ -89,7 +85,7 @@ export function MoneyField({
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium text-foreground">{label}</span>
       <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-3 shadow-sm transition-shadow focus-within:shadow-md focus-within:ring-2 focus-within:ring-ring">
-        <span className="text-sm text-muted-foreground">R\$</span>
+        <span className="text-sm text-muted-foreground">R$</span>
         <input
           inputMode="decimal"
           value={value}
@@ -194,7 +190,7 @@ export function ResultCard({
             </p>
           ) : null}
           <Button
-            disabled={saving || saved}
+            disabled={saving}
             onClick={async () => {
               setSaving(true);
               setSaveMessage("");
@@ -209,19 +205,12 @@ export function ResultCard({
                 setSaving(false);
               }
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl py-3 font-semibold"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] active:scale-95"
           >
-            {saved ? (
-              <>
-                <Check className="size-4" /> Salvo com Sucesso!
-              </>
-            ) : (
-              <>
-                <Save className="size-4" /> Guardar Venda
-              </>
-            )}
+            {saved ? <Check className="size-5 animate-scale-in" /> : <Save className="size-5" />}
+            {saving ? "Salvando..." : saved ? "Venda salva!" : "Salvar venda"}
           </Button>
-          {saveMessage ? <p className="text-center text-xs font-medium text-amber-600 dark:text-amber-400">{saveMessage}</p> : null}
+          {saveMessage ? <p role="status" className="text-xs text-muted-foreground">{saveMessage} <Link to="/auth" className="font-semibold underline">Entrar</Link></p> : null}
         </div>
       ) : null}
     </div>
