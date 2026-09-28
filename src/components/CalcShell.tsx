@@ -5,10 +5,6 @@ import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
 
-// CORREÇÃO: Importando diretamente as imagens PNG a partir da mesma pasta
-import enjoeiLogo from "./enjoeilogo.png";
-import shopeeLogo from "./shopeelogo.png";
-
 export type Brand = "shopee" | "enjoei" | "doces" | "vendas";
 export const BRAND_BG: Record<Brand, string> = {
   shopee: "bg-gradient-to-br from-[var(--shopee)] to-[var(--shopee-2)]",
@@ -22,15 +18,15 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
   if (brand === "shopee")
     return (
       <span className={`${base} block`}>
-        {/* CORREÇÃO: Usando a variável do import diretamente no src */}
-        <img src={shopeeLogo} alt="Shopee" className="size-full object-cover" />
+        {/* CORREÇÃO: Buscando a imagem diretamente da pasta public */}
+        <img src="/shopeelogo.png" alt="Shopee" className="size-full object-cover" />
       </span>
     );
   if (brand === "enjoei")
     return (
       <span className={`${base} block`}>
-        {/* CORREÇÃO: Usando a variável do import diretamente no src */}
-        <img src={enjoeiLogo} alt="Enjoei" className="size-full object-cover" />
+        {/* CORREÇÃO: Buscando a imagem diretamente da pasta public */}
+        <img src="/enjoeilogo.png" alt="Enjoei" className="size-full object-cover" />
       </span>
     );
   const Icon = brand === "doces" ? Candy : Receipt;
