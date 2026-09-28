@@ -50,11 +50,10 @@ function AuthPage() {
     if (!supabase) { setError("Configure a conexão com o banco de dados para entrar."); return; }
     setBusy(true); setError("");
     try {
-      const { data: result, error: oauthError } = await supabase.auth.signInWithOAuth("google", {
+      const { error: oauthError } = await supabase.auth.signInWithOAuth("google", {
         options: { redirectTo: `${window.location.origin}/auth` },
       });
       if (oauthError) throw oauthError;
-      if (result.error) throw result.error;
     } catch { setError("Não foi possível entrar com Google. Tente novamente."); }
     finally { setBusy(false); }
   };
