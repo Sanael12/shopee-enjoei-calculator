@@ -5,8 +5,9 @@ import { brl, LEVEL_STYLE, profitLevel, type Result } from "@/lib/calc";
 import { today } from "@/lib/sales";
 import { Button } from "@/components/ui/button";
 
-export type Brand = "shopee" | "enjoei" | "doces" | "vendas" | "gastos";
+export type Brand = "shopee" | "enjoei" | "doces" | "vendas" | "gastos" | "avaliacao";
 export const BRAND_BG: Record<Brand, string> = {
+  avaliacao: "bg-gradient-to-br from-[var(--avaliacao)] to-[var(--avaliacao-2)]",
   shopee: "bg-gradient-to-br from-[var(--shopee)] to-[var(--shopee-2)]",
   enjoei: "bg-gradient-to-br from-[var(--enjoei)] to-[var(--enjoei-2)]",
   doces: "bg-gradient-to-br from-[var(--doces)] to-[var(--doces-2)]",
@@ -28,6 +29,12 @@ export function Logo({ brand, className = "size-14" }: { brand: Brand; className
       <span className={`${base} block`}>
         {/* CORREÇÃO: Buscando a imagem diretamente da pasta public */}
         <img src="/enjoeilogo.png" alt="Enjoei" className="size-full object-cover" />
+      </span>
+    );
+  if (brand === "avaliacao")
+    return (
+      <span className={`${base} block bg-[#1f63e6]`}>
+        <img src="/avaliacao/tronco.png" alt="Avaliação física" className="size-full scale-[1.25] object-cover" />
       </span>
     );
   const Icon = brand === "doces" ? Candy : brand === "gastos" ? Wallet : Receipt;

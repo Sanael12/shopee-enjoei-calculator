@@ -62,6 +62,30 @@ export type Database = {
         }
         Relationships: []
       }
+      body_assessments: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          data: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          data?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          data?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           id: string
