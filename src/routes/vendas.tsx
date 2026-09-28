@@ -4,7 +4,6 @@ import { useState } from "react";
 import { BRAND_BG, Logo, ProfitBadge } from "@/components/CalcShell";
 import { brl, LEVEL_STYLE, profitLevel } from "@/lib/calc";
 import { formatDate, useSales, type Platform, type Sale } from "@/lib/sales";
-import trophy from "@/assets/trofeu-top3.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 
@@ -194,7 +193,7 @@ function VendasPage() {
           </div>
           <aside className="order-first overflow-hidden rounded-2xl bg-card shadow-xl lg:order-last" aria-label="Top 3 produtos por lucro">
             <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
-              <img src={trophy.url} alt="Troféu" width={139} height={149} className="size-14 object-contain" />
+              <img src="/trofeu-top3.png" alt="Troféu" width={139} height={149} className="size-14 object-contain" />
               <div>
                 <h2 className="text-lg font-bold text-foreground">Top 3 produtos</h2>
                 <p className="text-xs text-muted-foreground">Maiores lucros acumulados</p>
